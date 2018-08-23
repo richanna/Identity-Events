@@ -1,8 +1,8 @@
 ---
 title: Push-Based SET Token Delivery Using HTTP
-abbrev: ietf-secevent-http-push
-abbrev: draft-ietf-secevent-http-push-00
-date: 2018-07-20
+abbrev: draft-ietf-secevent-http-push
+docname: draft-ietf-secevent-http-push-01
+date: 2018-08-23
 category: std
 ipr: trust200902
 
@@ -49,6 +49,7 @@ author:
 
 normative:
     SET: RFC8417
+    HTTP: RFC7231
     POSIX.1:
         title: The Open Group Base Specifications Issue 7
         author:
@@ -68,8 +69,10 @@ using HTTP POST over TLS initiated as a push to the receiver.
 --- middle
 Introduction and Overview {#intro}
 =========================
-This specification defines how a stream of SETs {{!SET}} over TLS.
-The specification defines a method to push SETs via HTTP POST. 
+This specification defines how a stream of SETs {{!SET}} can be
+transmitted to a previously registered Event Receiver using {{!HTTP}}
+over TLS.  The specification defines a method to push SETs via HTTP
+POST.
 
 This specification defines a method for SET delivery in what
 is known as Event Streams.
@@ -79,7 +82,7 @@ Streams are defined, provisioned, managed, monitored,
 and configured and is out of scope of this specification.
 
 Notational Conventions {#conv}
-======================
+----------------------
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
 NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
 "MAY", and "OPTIONAL" in this document are to be interpreted as
@@ -96,7 +99,7 @@ URI's contained within examples, have been shortened for space and
 readability reasons.
 
 Definitions {#defn}
-===================
+-------------------
 This specification assumes terminology defined in the Security
 Event Token specification {{!SET}}.
 
@@ -134,7 +137,7 @@ Event
 token (SET).  See {{!SET}}.
 
 NumericDate
-A JSON numeric value representing the number of seconds from
+: A JSON numeric value representing the number of seconds from
 1970-01-01T00:00:00Z UTC until the specified UTC date/time, ignoring
 leap seconds.  This is equivalent to the IEEE Std 1003.1, 2013 Edition
 [POSIX.1](#POSIX.1) definition "Seconds Since the Epoch", in
@@ -220,6 +223,7 @@ To deliver an Event, the Event Transmitter generates an event
 delivery message and uses HTTP POST to the configured endpoint with
 the appropriate `Accept` and 
 `Content-Type` headers.
+
 ~~~
 POST /Events  HTTP/1.1
 
@@ -249,6 +253,7 @@ validate the JWT structure of the SET as defined in
 Section 7.2 of {{!RFC7519}}. The Event Receiver 
 SHALL also validate the SET information as described
 in Section 2 of {{!SET}}.
+
 If the SET is determined to be valid, the Event Receiver SHALL
 "acknowledge" successful submission by responding with HTTP Status
 202 as `Accepted` 
@@ -282,6 +287,7 @@ by Event Receivers is out-of-scope of this specification.
 In the Event of a general HTTP error condition, the Event Receiver
 MAY respond with an appropriate HTTP Status code as defined in 
 Section 6 of {{!RFC7231}}.
+
 When the Event Receiver detects an error parsing or 
 validating a received SET (as defined by {{!SET}}), 
 the Event Receiver SHALL indicate an HTTP Status 400 error with an 
@@ -307,20 +313,26 @@ Error Response Handling {#errorResponse}
 
 If a SET is invalid, the following error codes are defined:
 
-|Err Value|Description
-|json|Invalid JSON object.
-|jwtParse|Invalid or unparsable JWT or JSON structure.
-|jwtHdr|In invalid JWT header was detected.
-|jwtCrypto|Unable to parse due to unsupported algorithm.
-|jws|Signature was not validated.
-|jwe|Unable to decrypt JWE encoded data.
-|jwtAud|Invalid audience value.
-|jwtIss|Issuer not recognized.
-|setType|An unexpected Event type was received.
-|setParse|Invalid structure was encountered such as an 
-inability to parse or an incomplete set of Event claims.
-|setData|SET event claims incomplete or invalid.
-|dup|A duplicate SET was received and has been ignored.
+~~~
++-----------+------------------------------------------------------+
+| Err Value | Description                                          |
++-----------+------------------------------------------------------+
+| json      | Invalid JSON object.                                 |
+| jwtParse  | Invalid or unparsable JWT or JSON structure.         |
+| jwtHdr    | In invalid JWT header was detected.                  |
+| jwtCrypto | Unable to parse due to unsupported algorithm.        |
+| jws       | Signature was not validated.                         |
+| jwe       | Unable to decrypt JWE encoded data.                  |
+| jwtAud    | Invalid audience value.                              |
+| jwtIss    | Issuer not recognized.                               |
+| setType   | An unexpected Event type was received.               |
+| setParse  | Invalid structure was encountered such as an         |
+|           | inability to parse or an incomplete set of Event     |
+|           | claims.                                              |
+| setData   | SET event claims incomplete or invalid.              |
+| dup       | A duplicate SET was received and has been ignored    |
++-----------+------------------------------------------------------+
+~~~
 {: #reqErrors title="SET Errors"}
 
 An error response SHALL include a JSON
@@ -504,7 +516,7 @@ and user consent or terms of service in place.
 
 The propagation of subject identifiers can be perceived as personally
 identifiable information. Where possible, Event Transmitters and Receivers
-SHOULD devise approaches that prevent propagation -- for example, the
+SHOULD devise approaches that prevent propagation --- for example, the
 passing of a hash value that requires the subscriber to already know
 the subject.
 
