@@ -313,26 +313,20 @@ Error Response Handling {#errorResponse}
 
 If a SET is invalid, the following error codes are defined:
 
-~~~
-+-----------+------------------------------------------------------+
-| Err Value | Description                                          |
-+-----------+------------------------------------------------------+
-| json      | Invalid JSON object.                                 |
-| jwtParse  | Invalid or unparsable JWT or JSON structure.         |
-| jwtHdr    | In invalid JWT header was detected.                  |
-| jwtCrypto | Unable to parse due to unsupported algorithm.        |
-| jws       | Signature was not validated.                         |
-| jwe       | Unable to decrypt JWE encoded data.                  |
-| jwtAud    | Invalid audience value.                              |
-| jwtIss    | Issuer not recognized.                               |
-| setType   | An unexpected Event type was received.               |
-| setParse  | Invalid structure was encountered such as an         |
-|           | inability to parse or an incomplete set of Event     |
-|           | claims.                                              |
-| setData   | SET event claims incomplete or invalid.              |
-| dup       | A duplicate SET was received and has been ignored    |
-+-----------+------------------------------------------------------+
-~~~
+| Err Value | Description |
+|-----------+-------------|
+| json      | Invalid JSON object. |
+| jwtParse  | Invalid or unparsable JWT or JSON structure. |
+| jwtHdr    | In invalid JWT header was detected. |
+| jwtCrypto | Unable to parse due to unsupported algorithm. |
+| jws       | Signature was not validated. |
+| jwe       | Unable to decrypt JWE encoded data. |
+| jwtAud    | Invalid audience value. |
+| jwtIss    | Issuer not recognized. |
+| setType   | An unexpected Event type was received. |
+| setParse  | Invalid structure was encountered such as an inability to parse or an incomplete set of Event claims. |
+| setData   | SET event claims incomplete or invalid. |
+| dup       | A duplicate SET was received and has been ignored. |
 {: #reqErrors title="SET Errors"}
 
 An error response SHALL include a JSON

@@ -75,21 +75,21 @@ Table of Contents
      2.1.  Event Delivery Process  . . . . . . . . . . . . . . . . .   4
      2.2.  Push Delivery using HTTP  . . . . . . . . . . . . . . . .   5
      2.3.  Error Response Handling . . . . . . . . . . . . . . . . .   7
-   3.  Authentication and Authorization  . . . . . . . . . . . . . .   8
-     3.1.  Use of Tokens as Authorizations . . . . . . . . . . . . .   9
+   3.  Authentication and Authorization  . . . . . . . . . . . . . .   9
+     3.1.  Use of Tokens as Authorizations . . . . . . . . . . . . .  10
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .  10
      4.1.  Authentication Using Signed SETs  . . . . . . . . . . . .  10
      4.2.  HTTP Considerations . . . . . . . . . . . . . . . . . . .  10
-     4.3.  TLS Support Considerations  . . . . . . . . . . . . . . .  10
+     4.3.  TLS Support Considerations  . . . . . . . . . . . . . . .  11
      4.4.  Authorization Token Considerations  . . . . . . . . . . .  11
      4.5.  Bearer Token Considerations . . . . . . . . . . . . . . .  11
-   5.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  11
+   5.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  12
    6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
    7.  Normative References  . . . . . . . . . . . . . . . . . . . .  12
    Appendix A.  Other Streaming Specifications . . . . . . . . . . .  14
    Appendix B.  Acknowledgments  . . . . . . . . . . . . . . . . . .  15
    Appendix C.  Change Log . . . . . . . . . . . . . . . . . . . . .  15
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  15
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  16
 
 1.  Introduction and Overview
 
@@ -394,39 +394,61 @@ Backman, et al.         Expires February 24, 2019               [Page 7]
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
-   +-----------+------------------------------------------------------+
-   | Err Value | Description                                          |
-   +-----------+------------------------------------------------------+
-   | json      | Invalid JSON object.                                 |
-   | jwtParse  | Invalid or unparsable JWT or JSON structure.         |
-   | jwtHdr    | In invalid JWT header was detected.                  |
-   | jwtCrypto | Unable to parse due to unsupported algorithm.        |
-   | jws       | Signature was not validated.                         |
-   | jwe       | Unable to decrypt JWE encoded data.                  |
-   | jwtAud    | Invalid audience value.                              |
-   | jwtIss    | Issuer not recognized.                               |
-   | setType   | An unexpected Event type was received.               |
-   | setParse  | Invalid structure was encountered such as an         |
-   |           | inability to parse or an incomplete set of Event     |
-   |           | claims.                                              |
-   | setData   | SET event claims incomplete or invalid.              |
-   | dup       | A duplicate SET was received and has been ignored    |
-   +-----------+------------------------------------------------------+
+   +-----------+-------------------------------------------------------+
+   | Err Value | Description                                           |
+   +-----------+-------------------------------------------------------+
+   | json      | Invalid JSON object.                                  |
+   |           |                                                       |
+   | jwtParse  | Invalid or unparsable JWT or JSON structure.          |
+   |           |                                                       |
+   | jwtHdr    | In invalid JWT header was detected.                   |
+   |           |                                                       |
+   | jwtCrypto | Unable to parse due to unsupported algorithm.         |
+   |           |                                                       |
+   | jws       | Signature was not validated.                          |
+   |           |                                                       |
+   | jwe       | Unable to decrypt JWE encoded data.                   |
+   |           |                                                       |
+   | jwtAud    | Invalid audience value.                               |
+   |           |                                                       |
+   | jwtIss    | Issuer not recognized.                                |
+   |           |                                                       |
+   | setType   | An unexpected Event type was received.                |
+   |           |                                                       |
+   | setParse  | Invalid structure was encountered such as an          |
+   |           | inability to parse or an incomplete set of Event      |
+   |           | claims.                                               |
+   |           |                                                       |
+   | setData   | SET event claims incomplete or invalid.               |
+   |           |                                                       |
+   | dup       | A duplicate SET was received and has been ignored.    |
+   +-----------+-------------------------------------------------------+
 
-                           Figure 4: SET Errors
+                            Table 1: SET Errors
 
    An error response SHALL include a JSON object which provides details
    about the error.  The JSON object includes the JSON attributes:
 
    err
-      A value which is a keyword that describes the error (see
-      Figure 4).  description
+      A value which is a keyword that describes the error (see Table 1).
+      description
 
       A human-readable text that provides additional diagnostic
       information.
 
    When included as part of an HTTP Status 400 response, the above JSON
    is the HTTP response body (see Figure 3).
+
+
+
+
+
+
+
+Backman, et al.         Expires February 24, 2019               [Page 8]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
 
 3.  Authentication and Authorization
 
@@ -442,14 +464,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    Bearer Tokens
       Bearer tokens [RFC6750] MAY be used when combined with TLS and a
       token framework such as OAuth 2.0 [RFC6749].  For security
-
-
-
-Backman, et al.         Expires February 24, 2019               [Page 8]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
-
       considerations regarding the use of bearer tokens in SET delivery
       see Section 4.5.
 
@@ -483,6 +497,15 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    For illustrative purposes only, SET delivery examples show an OAuth2
    bearer token value [RFC6750] in the authorization header.  This is
    not intended to imply that bearer tokens are preferred.  However, the
+
+
+
+
+Backman, et al.         Expires February 24, 2019               [Page 9]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
    use of bearer tokens in the specification does reflect common
    practice.
 
@@ -496,15 +519,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    considering local access control rules.  Section 6 of the OAuth
    Assertions draft [RFC7521], documents common scenarios for
    authorization including:
-
-
-
-
-
-Backman, et al.         Expires February 24, 2019               [Page 9]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
 
    o  Clients using an assertion to authenticate and/or act on behalf of
       itself;
@@ -540,6 +554,14 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    As stated in Section 2.7.1 of [RFC7230], an HTTP requestor MUST NOT
    generate the "userinfo" (i.e., username and password) component (and
+
+
+
+Backman, et al.         Expires February 24, 2019              [Page 10]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
    its "@" delimiter) when an "http" URI reference is generated with a
    message as they are now disallowed in HTTP.
 
@@ -554,13 +576,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    server certificate check, per [RFC6125].  Implementation security
    considerations for TLS can be found in "Recommendations for Secure
    Use of TLS and DTLS" [RFC7525].
-
-
-
-Backman, et al.         Expires February 24, 2019              [Page 10]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
 
 4.4.  Authorization Token Considerations
 
@@ -594,6 +609,15 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    SET tokens, however this information is provided as a resource to
    implementers.
 
+
+
+
+
+Backman, et al.         Expires February 24, 2019              [Page 11]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
 5.  Privacy Considerations
 
    If a SET needs to be retained for audit purposes, JWS MAY be used to
@@ -610,14 +634,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    The propagation of subject identifiers can be perceived as personally
    identifiable information.  Where possible, Event Transmitters and
-
-
-
-Backman, et al.         Expires February 24, 2019              [Page 11]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
-
    Receivers SHOULD devise approaches that prevent propagation -- for
    example, the passing of a hash value that requires the subscriber to
    already know the subject.
@@ -651,6 +667,13 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
               <https://www.rfc-editor.org/info/rfc3986>.
 
+
+
+Backman, et al.         Expires February 24, 2019              [Page 12]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246,
               DOI 10.17487/RFC5246, August 2008, <https://www.rfc-
@@ -666,13 +689,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    [RFC6749]  Hardt, D., Ed., "The OAuth 2.0 Authorization Framework",
               RFC 6749, DOI 10.17487/RFC6749, October 2012,
               <https://www.rfc-editor.org/info/rfc6749>.
-
-
-
-Backman, et al.         Expires February 24, 2019              [Page 12]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
 
    [RFC6750]  Jones, M. and D. Hardt, "The OAuth 2.0 Authorization
               Framework: Bearer Token Usage", RFC 6750,
@@ -707,6 +723,13 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
               and Authorization Grants", RFC 7521, DOI 10.17487/RFC7521,
               May 2015, <https://www.rfc-editor.org/info/rfc7521>.
 
+
+
+Backman, et al.         Expires February 24, 2019              [Page 13]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
    [RFC7525]  Sheffer, Y., Holz, R., and P. Saint-Andre,
               "Recommendations for Secure Use of Transport Layer
               Security (TLS) and Datagram Transport Layer Security
@@ -720,15 +743,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
-
-
-
-
-
-Backman, et al.         Expires February 24, 2019              [Page 13]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
 
    [SET]      Hunt, P., Ed., Jones, M., Denniss, W., and M. Ansari,
               "Security Event Token (SET)", RFC 8417,
@@ -764,6 +778,14 @@ Appendix A.  Other Streaming Specifications
    Delivery Policies supported by SNS, as well as the delivery controls
    that SQS offers (e.g.  Visibility Timeout, Dead-Letter Queues).  I'm
    not suggesting that we need all of these things in the spec, but they
+
+
+
+Backman, et al.         Expires February 24, 2019              [Page 14]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
    give an idea of what features people have found useful.  Other
    information:
 
@@ -778,14 +800,6 @@ Appendix A.  Other Streaming Specifications
    Apache Kafka Apache Kafka is an Apache open source project based upon
    TCP for distributed streaming.  It prescribes some interesting
    general purpose features that seem to extend far beyond the simpler
-
-
-
-Backman, et al.         Expires February 24, 2019              [Page 14]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
-
    streaming model SECEVENTs is after.  A comment from MS has been that
    Kafka does an acknowledge with poll combination event which seems to
    be a performance advantage.  See: https://kafka.apache.org/intro
@@ -820,6 +834,14 @@ Appendix C.  Change Log
 
    o  Renamed to "Push-Based SET Token Delivery Using HTTP"
 
+
+
+
+Backman, et al.         Expires February 24, 2019              [Page 15]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
    o  Removed references to the HTTP Polling delivery method.
 
    o  Removed informative reference to RFC6202.
@@ -830,16 +852,6 @@ Authors' Addresses
    Amazon
 
    Email: richanna@amazon.com
-
-
-
-
-
-
-
-Backman, et al.         Expires February 24, 2019              [Page 15]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    Michael B. Jones
@@ -871,18 +883,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    Microsoft
 
    Email: tonynad@microsoft.com
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
