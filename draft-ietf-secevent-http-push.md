@@ -48,38 +48,28 @@ author:
     email: tonynad@microsoft.com
 
 normative:
+    BCP26: RFC8126
+    JWT: RFC7519
+    JWS: RFC7515
+    JWE: RFC7516
     SET: RFC8417
+    TLS: RFC5246
     HTTP: RFC7231
-    POSIX.1:
-        title: The Open Group Base Specifications Issue 7
-        author:
-        -
-            org: Institute of Electrical and Electronics Engineers
-        date: 2013
-        seriesinfo:
-            IEEE: Std 1003.1, 2013 Edition
-        format:
-            HTML: http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_15
 
 --- abstract
-This specification defines how a series of security event tokens 
-(SETs) may be delivered to a previously registered receiver 
-using HTTP POST over TLS initiated as a push to the receiver.
+This specification defines how a Security Event Token (SET) may be delivered to an intended recipient using HTTP POST. The SET is transmitted in the body of an HTTP POST request to a previously registered endpoint, and the recipient indicates success or failure via the HTTP response.
 
 --- middle
-Introduction and Overview {#intro}
-=========================
-This specification defines how a stream of SETs {{!SET}} can be
-transmitted to a previously registered Event Receiver using {{!HTTP}}
-over TLS.  The specification defines a method to push SETs via HTTP
-POST.
+Introduction {#intro}
+============
+This specification defines a mechanism by which a holder of a Security Event Token ({{!SET}}) may deliver the SET to an intended recipient via HTTP POST {{!HTTP}}.
 
-This specification defines a method for SET delivery in what
-is known as Event Streams.
+Push-Based SET Delivery over HTTP POST is intended for scenarios where:
 
-This specification does not define the method by which Event 
-Streams are defined, provisioned, managed, monitored,
-and configured and is out of scope of this specification.
+* The holder of the SET is capable of making outbound HTTP requests
+* and the recipient is capable of hosting an HTTP endpoint that is accessible to the transmitter
+* and the transmitter and recipient are known to one another
+* and the transmitter and recipient have an out-of-band mechanism for exchanging configuration metadata and/or security keys
 
 Notational Conventions {#conv}
 ----------------------
@@ -89,148 +79,63 @@ NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
 described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when,
 they appear in all capitals, as shown here.
 
-For purposes of readability examples are not URL encoded.
-Implementers MUST percent encode URLs as described in Section 2.1 of
-{{!RFC3986}}.
-
-Throughout this documents all figures MAY contain spaces and extra
-line-wrapping for readability and space limitations. Similarly, some
-URI's contained within examples, have been shortened for space and
-readability reasons.
+Throughout this document all figures MAY contain spaces and extra
+line-wrapping for readability and space limitations.
 
 Definitions {#defn}
 -------------------
 This specification assumes terminology defined in the Security
-Event Token specification {{!SET}}.
-
-The following definitions are defined for Security Event distribution:
+Event Token specification {{!SET}}, as well as the terms defined below:
 
 {: vspace="0"}
-Event Transmitter
-: A service provider that delivers SETs to other providers known
-as Event Receivers. An Event Transmitter is responsible for offering a
-service that allows the Event Receiver to check the Event Stream
-configuration and status known as the "Control Plane". 
+SET Receipt Endpoint
+: An HTTP endpoint operated by the SET Receiver, which is configured to
+receive SETs in accordance with this specification.
 
-Event Receiver
-: A service provider that registers to receive SETs from an Event
-Transmitter and provides an endpoint to receive SETs via HTTP POST. 
-Event Receivers can check current Event Stream configuration and status
-by accessing the Event Transmitters "Control Plane".
+SET Receiver
+: An entity that is prepared to receive one or more SETs from a SET
+Transmitter.
 
-Event Stream
-: An Event Stream is a defined location, distribution method and
-whereby an Event Transmitter and Event Receiver exchange a pre-
-defined family of SETs. A Stream is assumed to have configuration data
-such as HTTP endpoints, timeouts, public key sets for signing and
-encryption, and Event Families.
+SET Transmitter
+: An entity that is in possession of a SET that is to be transmitted to a
+SET Receiver. This MAY be the issuer of the SET or an entity affiliated
+with the issuer, but this is neither guaranteed nor required to be the case.
 
-Subject
-: The security subject around which a security event has occurred. For
-example, a security subject might per a user, a person, an email
-address, a service provider entity, an IP address, an OAuth Client, a
-mobile device, or any identifiable thing referenced in security and
-authorization systems.
+SET Delivery {#event_delivery}
+============
+To deliver a SET to a given SET Receiver, the SET Transmitter makes a request to the SET Receipt Endpoint. This request contains within it the SET itself. The SET Receiver replies to this request with a response indicating whether or not the SET was successfully received and validated by the SET Receiver.
 
-Event
-: An Event is defined to be an event as represented by a security event
-token (SET).  See {{!SET}}.
+Upon receipt of a SET, the SET Receiver SHOULD validate that all of the following are true:
 
-NumericDate
-: A JSON numeric value representing the number of seconds from
-1970-01-01T00:00:00Z UTC until the specified UTC date/time, ignoring
-leap seconds.  This is equivalent to the IEEE Std 1003.1, 2013 Edition
-[POSIX.1](#POSIX.1) definition "Seconds Since the Epoch", in
-which each day is accounted for by exactly 86400 seconds, other than
-that non-integer values can be represented.  See {{!RFC3339}} for
-details regarding date/times in general and UTC in particular.
+* The SET Receiver can parse the SET
+* The SET is authentic (i.e. it was issued by the issuer specified within the SET)
+* The SET Receiver is identified as the intended audience of the SET
 
-SET Event Stream Protocol {#event_stream}
-=========================
-An Event Stream represents the communication channel over which a 
-series of SETs are delivered to a configured Event Receiver. 
+The mechanisms by which the SET Receiver performs this validation are out-of-scope for this document. SET parsing and issuer and audience identification are defined in {{!SET}}. How the SET Receiver may validate authenticity is implementation specific, and will vary depending on authentication mechanisms, and whether the SET is signed and/or encrypted (See {{aa}}).
 
-Event Delivery Process {#event_delivery}
-----------------------
-When an Event occurs, the Event Transmitter constructs a SET
-token {{!SET}} that describes the Event. The Event Transmitter
-determines the Event Streams over which the SET should be distributed
-to.
- 
-How SETs are defined and the process by which Events are identified for 
-Event Receivers is out-of-scope of this    specification.
+The SET Receiver SHOULD ensure that the SET is persisted in a way that is sufficient to meet the SET Receiver's own reliability requirements, and MUST NOT expect or depend on a SET Transmitter to re-transmit or otherwise make available to the SET Receiver a SET once the SET Receiver acknowledges that it was received successfully.
 
-When a SET is available for an Event Receiver, the Event Transmitter
-attempts to deliver the SET based on the Event Receiver's registered
-delivery mechanism:
+Once the SET has been validated and persisted, the SET Receiver SHOULD immediately return a response indicating that the SET was successfully delivered. The SET Receiver SHOULD NOT perform extensive business logic that processes the event expressed by the SET prior to sending this response. Such logic SHOULD be executed asynchronously from delivery, in order to minimize the expense and impact of SET delivery on the SET Transmitter.
 
-* The Event Transmitter uses an HTTP/1.1 POST to the Event Receiver
-endpoint to deliver the SET;
-* Or, the Event Transmitter delivers the Event through a different
-method not defined by this specification.
+The SET Transmitter SHOULD NOT re-transmit a SET, unless the response from the SET Receipt Endpoint in previous transmissions indicated a potentially recoverable error (such as server unavailability that may be transient, or a decryption failure that may be due to misconfigured keys on the SET Receiver's side). In the latter case, the SET Transmitter MAY re-transmit a SET, after an appropriate delay to avoid browning out the SET Receipt Endpoint (See {{reliability}}).
 
-In Push-Based SET Delivery Using HTTP, SETs are delivered one at a
-time using HTTP POST requests by an Event Transmitter to an Event
-Receiver. The HTTP request body is a JSON Web Token {{!RFC7519}}
-with a `Content-Type` header of `application/secevent+jwt` as
-defined in Section 2.2 and 6.2 of {{!SET}}. Upon receipt, the 
-Event Receiver acknowledges receipt with a response with HTTP 
-Status 202, as described below in {{httpPost}}.
+The SET Transmitter MAY provide an out-of-band mechanism by which a SET Receiver may be notified of delivery failures, and MAY retain SETs that it failed to deliver and make them available to the SET Receiver via other means.
 
-After successful (acknowledged) SET delivery, Event 
-Transmitters SHOULD NOT be required to maintain or record SETs for 
-recovery. Once a SET is acknowledged, the Event Receiver SHALL be 
-responsible for retention and recovery.
-
-Transmitted SETs SHOULD be self-validating (e.g. signed)
-if there is a requirement to verify they were issued by the Event 
-Transmitter at a later date when de-coupled from the original 
-delivery where authenticity could be checked via the HTTP or 
-TLS mutual authentication.
-
-Upon receiving a SET, the Event Receiver reads the SET and validates 
-it. The Event Receiver MUST acknowledge receipt to the Event Transmitter, using the 
-defined acknowledgement or error method.
-
-The Event Receiver SHALL NOT use the Event acknowledgement mechanism
-to report Event errors other than relating to the parsing and validation
-of the SET.
-
-Push Delivery using HTTP {#httpPost}
+SET Transmission Request {#tx_request}
 ------------------------
-This method allows an Event Transmitter to use HTTP POST 
-(Section 4.3.3 of {{!RFC7231}}) to deliver
-SETs to a previously registered web callback URI supplied by the
-Event Receiver as part of an Event Stream configuration process 
-(not defined by this document).
+To transmit a SET to a given SET Receiver, the SET Transmitter makes an HTTP POST request to the SET Receiver's SET Receipt Endpoint.  The `Content-Type` header of this request MUST be `application/secevent+jwt` as defined in Sections 2.2 and 6.2 of {{!SET}}, and the request body MUST be the SET itself, represented as a {{!JWT}}.
 
-The SET to be delivered MAY be signed 
-and/or encrypted as defined in {{!SET}}.
+The mechanism by which the SET Transmitter determines the SET Receipt Endpoint is not defined by this specification and may be implementation-specific.
 
-The Event Stream configuration defines a URI of an Event 
-Receiver provided endpoint which accepts HTTP POST requests (e.g. 
-`https://rp.example.com/Events`).
-
-The HTTP Content-Type (see 
-Section 3.1.1.5 of {{!RFC7231}}) for the HTTP POST is 
-`application/secevent+jwt` and SHALL consist of 
-a single SET (see {{!SET}}).
-As per Section 5.3.2 of {{!RFC7231}}, the expected 
-media type (`Accept` header) response is 
-`application/json`.
-
-To deliver an Event, the Event Transmitter generates an event 
-delivery message and uses HTTP POST to the configured endpoint with
-the appropriate `Accept` and 
-`Content-Type` headers.
+The following is a non-normative example of a SET transmission request:
 
 ~~~
 POST /Events  HTTP/1.1
 
 Host: notify.examplerp.com
 Accept: application/json
-Authorization: Bearer h480djs93hd8
 Content-Type: application/secevent+jwt
+
 eyJhbGciOiJub25lIn0
 .
 eyJwdWJsaXNoZXJVcmkiOiJodHRwczovL3NjaW0uZXhhbXBsZS5jb20iLCJmZWV
@@ -246,74 +151,38 @@ tZSI6Impkb2UiLCJpZCI6IjQ0ZjYxNDJkZjk2YmQ2YWI2MWU3NTIxZDkiLCJuYW
 1lIjp7ImdpdmVuTmFtZSI6IkpvaG4iLCJmYW1pbHlOYW1lIjoiRG9lIn19fQ
 .
 ~~~
-{: #postSet title="Example HTTP POST Request"}
+{: #postSet title="Example SET Transmission Request"}
 
-Upon receipt of the request, the Event Receiver SHALL 
-validate the JWT structure of the SET as defined in 
-Section 7.2 of {{!RFC7519}}. The Event Receiver 
-SHALL also validate the SET information as described
-in Section 2 of {{!SET}}.
+Successful Delivery {#tx_success}
+-------------------
+If the SET Receiver successfully parses and validates the SET transmitted in a SET Transmission Request, the SET Receipt Endpoint MUST respond with an HTTP Response Status Code of 202. The body of the response MUST be empty.
 
-If the SET is determined to be valid, the Event Receiver SHALL
-"acknowledge" successful submission by responding with HTTP Status
-202 as `Accepted` 
-(see Section 6.3.3 of {{!RFC7231}}).
-
-In order
-to maintain compatibility with other methods of transmission, the 
-Event Receiver SHOULD NOT include an HTTP response body representation
-of the submitted SET or what the SET's pending status is when 
-acknowledging success. In the case of an error (e.g. HTTP Status 400),
-the purpose of the HTTP response body is to indicate any SET parsing, 
-validation, or cryptographic errors.
-
-The following is a non-normative example of a successful
-receipt of a SET.
+The following is a non-normative example of a response indicating that the SET was successfully delivered to the SET Receiver:
 
 ~~~
 HTTP/1.1 202 Accepted
 ~~~
 {: #goodPostResponse title="Example Successful Delivery Response"}
 
-Note that the purpose of the "acknowledgement" response is to let the 
-Event Transmitter know that a SET has been delivered and the 
-information no longer needs to be retained by the Event Transmitter. 
-Before acknowledgement, Event Receivers SHOULD ensure they have 
-validated received SETs and retained them in a manner appropriate 
-to information retention requirements appropriate to the SET 
-event types signaled. The level and method of retention of SETs
-by Event Receivers is out-of-scope of this specification.
+Delivery Failure {#tx_failure}
+----------------
+The SET Receipt Endpoint MAY indicate generic HTTP errors by responding with an appropriate HTTP Response Status Code, as described in Section 6 of {{!HTTP}}.
 
-In the Event of a general HTTP error condition, the Event Receiver
-MAY respond with an appropriate HTTP Status code as defined in 
-Section 6 of {{!RFC7231}}.
+If the SET Receiver encounters an error parsing or validating the SET transmitted in a SET Transmission Request, the SET Receipt Endpoint MUST respond with an HTTP Response Status Code of 400. The `Content-Type` header of this response MUST be "application/json", and the body of the response MUST be a JSON object containing two name/value pairs:
 
-When the Event Receiver detects an error parsing or 
-validating a received SET (as defined by {{!SET}}), 
-the Event Receiver SHALL indicate an HTTP Status 400 error with an 
-error code as described in {{errorResponse}}.
+{: vspace="0"}
+description
+: A string whose value is a human-readable description of the error that occurred.
 
-The following is an example non-normative error 
-response.
+err
+: A string whose value is the name of a Security Event Token Delivery Error Code.
 
-~~~
-HTTP/1.1 400 Bad Request
-Content-Type: application/json
+### Security Event Token Delivery Error Codes {#error_codes}
+Security Event Token Delivery Error Codes are strings that identify a specific type of error that may occur when parsing or validating a SET. Every Security Event Token Delivery Error Code MUST have a unique name registered in the IANA "Security Event Token Delivery Error Codes" registry established by {{iana_set_errors}}.
 
-{
-  "err":"dup",
-  "description":"SET already received. Ignored."
+The following table presents the initial set of Error Codes that are registered in the IANA "Security Event Token Delivery Error Codes" registry:
 
-}
-~~~
-{: #badPostResponse title="Example HTTP Status 400 Response"}
-
-Error Response Handling {#errorResponse}
------------------------
-
-If a SET is invalid, the following error codes are defined:
-
-| Err Value | Description |
+| Error Code | Description
 |-----------+-------------|
 | json      | Invalid JSON object. |
 | jwtParse  | Invalid or unparsable JWT or JSON structure. |
@@ -327,268 +196,186 @@ If a SET is invalid, the following error codes are defined:
 | setParse  | Invalid structure was encountered such as an inability to parse or an incomplete set of Event claims. |
 | setData   | SET event claims incomplete or invalid. |
 | dup       | A duplicate SET was received and has been ignored. |
-{: #reqErrors title="SET Errors"}
+{: #tabErrors title="SET Delivery Error Codes"}
 
-An error response SHALL include a JSON
-object which provides details about the error. The JSON object
-includes the JSON attributes:
+The following is a non-normative response indicating a delivery failure due to a failure during signature validation:
 
-{: vspace="0"}
-err
-: A value which is a keyword that 
-describes the error (see {{reqErrors}}).
-description
-: A human-readable text that provides
-additional diagnostic information.
+~~~
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
 
-When included as part of an HTTP Status 400 response, the above
-JSON is the HTTP response body (see {{badPostResponse}}).
+{
+  "err":"jws",
+  "description":"Unable to validate signature."
+
+}
+~~~
+{: #badPostResponse title="Example Delivery Failure Response"}
+
 
 Authentication and Authorization {#aa}
 ================================
+The mechanisms by which the SET Receipt Endpoint authenticates callers and confirms that they are authorized to transmit the SET are implementation specific and out-of-scope for this document. SET Receipt Endpoints SHOULD use standard transportation layer security mechanisms (such as TLS 1.2 {{!TLS}} or later). When TLS is used, the SET Receipt Endpoint MUST support TLS 1.2 or greater, and MAY support other versions of TLS.
 
-The SET delivery method described in this specification is
-based upon HTTP and depends on the use of TLS and/or standard 
-HTTP authentication and authorization schemes as per 
-{{!RFC7235}}. For example, the following
-methodologies could be used among others:
+If integrity and authenticity are not provided at the transportation layer, the SET Receipt Endpoint MUST sign and/or encrypt the SET in accordance with {{!JWS}} and {{!JWE}}. The SET Receipt Endpoint MAY use both transportation layer security and SET signatures and/or encryption.
 
-{: vspace="0"}
-TLS Client Authentication
-: Event delivery
-endpoints MAY request TLS mutual client authentication. 
-See Section 7.3 of {{!RFC5246}}. 
+The SET Receipt Endpoint MAY use standard HTTP authentication mechanisms (such as OAuth 2.0 Bearer tokens {{!RFC6750}}) in order to authenticate the caller.
 
-Bearer Tokens
-: Bearer tokens 
-{{!RFC6750}} MAY be used when combined with TLS and a token
-framework such as OAuth 2.0 {{!RFC6749}}. 
-For security considerations regarding the use of bearer tokens in
-SET delivery see {{bearerConsiderations}}.
+See {{security}} for further guidance.
 
-Basic Authentication
-: Usage of basic
-authentication should be avoided due to its use of a single factor
-that is based upon a relatively static, symmetric secret.
-Implementers SHOULD combine the use of basic authentication with
-other factors. The security considerations of HTTP BASIC, are well
-documented in {{!RFC7617}} and SHOULD be considered
-along with using signed SETs (see SET Payload Authentication below).
 
-SET Payload Authentication
-: In scenarios 
-where SETs are signed and
-the delivery method is HTTP POST (see {{httpPost}}),
-Event Receivers MAY elect to use Basic Authentication or not 
-to use HTTP or TLS based authentication at all. See 
-{{payloadAuthentication}} for considerations.
+Delivery Reliability {#reliability}
+====================
+Delivery reliability requirements may vary from implementation to implementation.  This specification provides the response from the SET Receipt Endpoint in such a way as to provide the SET Transmitter with the information necessary to determine what further action is required, if any, in order to meet their requirements.  SET Transmitters with high reliability requirements may be tempted to always retry failed transmissions, however it should be noted that for many types of SET delivery errors, a retry is extremely unlikely to be successful.  For example, `json`, `jwtParse`, and `setParse` all indicate structural errors in the content of the SET that are likely to remain when re-transmitting the same SET.  Others such as `jws` or `jwe` may be transient, for example if cryptographic material has not been properly distributed to the SET Receipt Endpoint.
 
-As per Section 4.1 of {{!RFC7235}}, a SET
-delivery endpoint SHALL indicate supported HTTP authentication 
-schemes via the `WWW-Authenticate` header.
+Implementers SHOULD evaluate their reliability requirements and the impact of various retry mechanisms on the performance of their systems to determine the correct strategy for various error conditions.
 
-Because SET Delivery describes a simple function, authorization
-for the ability to pick-up or deliver SETs can be derived by
-considering the identity of the SET issuer, or via an authentication
-method above. This specification considers authentication as a
-feature to prevent denial-of-service attacks. Because SETs are
-not commands (see ), Event Receivers are free to ignore SETs that 
-are not of interest.
 
-For illustrative purposes only, SET delivery examples show an OAuth2
-bearer token value {{!RFC6750}} in the authorization header.
-This is not intended to imply that bearer tokens are
-preferred. However, the use of bearer tokens in the specification does
-reflect common practice. 
-
-Use of Tokens as Authorizations {#authzTokens}
--------------------------------
-When using bearer tokens or proof-of-possession tokens that
-represent an authorization grant such as issued by OAuth (see {{!RFC6749}}), implementers SHOULD consider the type of
-authorization granted, any authorized scopes (see Section 3.3 of {{!RFC6749}}), and the security subject(s) that SHOULD be mapped
-from the authorization when considering local access control rules.
-Section 6 of the OAuth Assertions draft {{!RFC7521}}, documents common scenarios for
-authorization including:
-
-* Clients using an assertion to authenticate and/or act on behalf
-of itself;
-
-* Clients acting on behalf of a user; and,
-
-* A Client acting on behalf of an anonymous user (e.g., see next
-section).
-
-When using OAuth authorization tokens, implementers MUST take
-into account the threats and countermeasures documented in the
-security considerations for the use of client authorizations (see
-Section 8 of {{!RFC7521}}). When using
-other token formats or frameworks, implementers MUST take into account
-similar threats and countermeasures, especially those documented by
-the relevant specifications.
-
-Security Considerations {#Security}
+Security Considerations {#security}
 =======================
 
-Authentication Using Signed SETs {#payloadAuthentication}
---------------------------------
-In scenarios where HTTP authorization or TLS mutual authentication
-are not used or are considered weak, JWS signed SETs SHOULD be 
-used (see {{!RFC7515}} and {{!SET}}
-Security Considerations). This enables the Event Receiver
-to validate that the SET issuer is authorized to deliver SETs.
+Denial-of-Service
+-----------------
+The SET Receipt Endpoint may be vulnerable to a denial-of-service attack where a malicious party makes a high volume of requests containing invalid SETs, causing the endpoint to expend significant resources on cryptographic operations that are bound to fail. This may be mitigated by implementing an authentication mechanism with low runtime overhead, such as mutual TLS, or statically assigned bearer tokens.
 
-HTTP Considerations
--------------------
-SET delivery depends on the use of Hypertext Transfer Protocol and thus
-subject to the security considerations of HTTP Section 9 of {{!RFC7230}} and its related specifications.
+Authenticating Persisted SETs
+-----------------------------
+While the SET Receipt Endpoint can rely upon transport layer mechanisms, HTTP authentication methods, and/or other context from the transmission request to authenticate the SET Transmitter and validate the authenticity of the SET, this context is typically unavailable to systems that the SET Receipt Endpoint forwards the SET onto, or to systems that retrieve the SET from storage.  If the SET Receiver requires the ability to validate SET authenticity outside of the context of the SET Receipt Endpoint, then the SET Transmitter SHOULD sign the SET in accordance with {{!JWS}}, or encrypt it using an authenticated encryption scheme in accordance with {{!JWE}}.
 
-As stated in Section 2.7.1 of {{!RFC7230}}, an 
-HTTP requestor MUST NOT generate the `userinfo`
-(i.e., username and password) component (and its "@" delimiter) when
-an "http" URI reference is generated with a message as they are now
-disallowed in HTTP.
-
-TLS Support Considerations
---------------------------
-SETs contain sensitive information that is considered PII
-(e.g. subject claims). Therefore, Event Transmitters and
-Event Receivers MUST require the use of a transport-layer 
-security mechanism. Event delivery endpoints MUST support TLS 
-1.2 {{!RFC5246}} and MAY support additional 
-transport-layer mechanisms meeting its security requirements. 
-When using TLS, the client MUST perform a TLS/SSL server
-certificate check, per {{!RFC6125}}. Implementation
-security considerations for TLS can be found in "Recommendations for
-Secure Use of TLS and DTLS" {{!RFC7525}}.
-
-Authorization Token Considerations
-----------------------------------
-When using authorization tokens such as those issued by OAuth 2.0
-{{!RFC6749}}, implementers MUST take into account threats
-and countermeasures documented in Section 8 of {{!RFC7521}}.
-
-Bearer Token Considerations {#bearerConsiderations}
----------------------------
-Due to the possibility of interception, Bearer tokens MUST be 
-exchanged using TLS.
-
-Bearer tokens MUST have a limited lifetime that can be determined
-directly or indirectly (e.g., by checking with a validation service)
-by the service provider. By expiring tokens, clients are forced to
-obtain a new token (which usually involves re-authentication) for
-continued authorized access. For example, in OAuth2, a client MAY use
-OAuth token refresh to obtain a new bearer token after authenticating
-to an authorization server. See Section 6 of {{!RFC6749}}.
-
-Implementations supporting OAuth bearer tokens need to factor in
-security considerations of this authorization method 
-{{!RFC7521}}. Since security is only as good
-as the weakest link, implementers also need to consider authentication
-choices coupled with OAuth bearer tokens. The security considerations
-of the default authentication method for OAuth bearer tokens, HTTP
-BASIC, are well documented in 
-{{!RFC7617}}, therefore implementers
-are encouraged to prefer stronger authentication methods. Designating
-the specific methods of authentication and authorization are
-out-of-scope for the delivery of SET tokens, however this 
-information is provided as a resource to implementers.
 
 Privacy Considerations
 ======================
 
-If a SET needs to be retained for audit purposes, JWS MAY 
-be used to provide verification of its authenticity.
+When sharing personally identifiable information or information that is otherwise considered confidential to affected users, SET Transmitters and Receivers MUST have the appropriate legal agreements and user consent or terms of service in place.
 
-Event Transmitters SHOULD attempt to specialize Event Streams 
-so that the content is targeted to the specific business and 
-protocol needs of subscribers.
-
-When sharing personally identifiable information or information
-that is otherwise considered confidential to affected users, Event 
-Transmitters and Receivers MUST have the appropriate legal agreements
-and user consent or terms of service in place.
-
-The propagation of subject identifiers can be perceived as personally
-identifiable information. Where possible, Event Transmitters and Receivers
-SHOULD devise approaches that prevent propagation --- for example, the
-passing of a hash value that requires the subscriber to already know
-the subject.
+The propagation of subject identifiers can be perceived as personally identifiable information. Where possible, SET Transmitters and Receivers SHOULD devise approaches that prevent propagation --- for example, the passing of a hash value that requires the subscriber to already know the subject.
 
 IANA Considerations {#IANA}
 ===================
 
-There are no IANA considerations.
+Security Event Token Delivery Error Codes {#iana_set_errors}
+-----------------------------------------
+This document defines Security Event Token Delivery Error Codes, for which IANA is asked to create and maintain a new registry titled "Security Event Token Delivery Error Codes".  Initial values for the Security Event Token Delivery Error Codes registry are given in {{tabErrors}}.  Future assignments are to be made through the Expert Review registration policy ({{!BCP26}}) and shall follow the template presented in {{iana_set_errors_template}}.
+
+### Registration Template {#iana_set_errors_template}
+
+{: vspace="0"}
+Error Code
+: The name of the Security Event Token Delivery Error Code, as described in {{error_codes}}. The name MUST be a case-sensitive ASCII string consisting only of upper-case letters ("A" - "Z"), lower-case letters ("a" - "z"), and digits ("0" - "9").
+
+Descrption
+: A brief human-readable description of the Security Event Token Delivery Error Code.
+
+Change Controller
+: For error codes registered by the IETF or its working groups, list "IETF Secevent Working Group".  For all other error codes, list the name of the party responsible for the registration.  Contact information such as mailing address, email address, or phone number may also be provided.
+
+Defining Document(s)
+: A reference to the document or documents that define the Security Event Token Delivery Error Code. The definition MUST specify the name and description of the error code, and explain under what circumstances the error code may be used. URIs that can be used to retrieve copies of each document at no cost SHOULD be included.
+
+### Initial Registry Contents
+
+#### json
+* Name: json
+* Description: Invalid JSON object.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwtParse
+* Name: jwtParse
+* Description: Invalid or unparsable JWT or JSON structure.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwtHdr
+* Name: jwtHdr
+* Description: In invalid JWT header was detected.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwtCrypto
+* Name: jwtCrypto
+* Description: Unable to parse due to unsupported algorithm.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jws
+* Name: jws
+* Description: Signature was not validated.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwe
+* Name: jwe
+* Description: Unable to decrypt JWE encoded data.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwtAud
+* Name: jwtAud
+* Description: Invalid audience value.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwtIss
+* Name: jwtIss
+* Description: Issuer not recognized.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### setType
+* Name: setType
+* Description: An unexpected Event type was received.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### setParse
+* Name: setParse
+* Description: Invalid structure was encountered such as an inability to parse or an incomplete set of Event claims.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### setData
+* Name: setData
+* Description: SET event claims incomplete or invalid.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### dup
+* Name: dup
+* Description: A duplicate SET was received and has been ignored.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
 
 --- back
-Other Streaming Specifications
-==============================
-\[\[EDITORS NOTE: This section to be removed prior to publication]]
-
-The following pub/sub, queuing, streaming systems were reviewed 
-as possible solutions or as input to the current draft:
-
-XMPP Events
-The WG considered the XMPP events ands its ability to provide a single
-messaging solution without the need for both polling and push modes.
-The feeling was the size and methodology of XMPP was to far apart from
-the current capabilities of the SECEVENTs community which focuses in
-on HTTP based service delivery and authorization.
-
-Amazon Simple Notification Service
-Simple Notification Service, is a pub/sub messaging product from 
-AWS. SNS supports a variety of subscriber types: HTTP/HTTPS endpoints, 
-AWS Lambda functions, email addresses (as JSON or plain text), phone 
-numbers (via SMS), and AWS SQS standard queues. It doesn’t directly 
-support pull, but subscribers can get the pull model by creating an 
-SQS queue and subscribing it to the topic. Note that this puts the 
-cost of pull support back onto the subscriber, just as it is in the 
-push model. It is not clear that one way is strictly better than the 
-other; larger, sophisticated developers may be happy to own message 
-persistence so they can have their own internal delivery guarantees. 
-The long tail of OIDC clients may not care about that, or may fail 
-to get it right. Regardless, I think we can learn something from the 
-Delivery Policies supported by SNS, as well as the delivery controls 
-that SQS offers (e.g. Visibility Timeout, Dead-Letter Queues). I’m 
-not suggesting that we need all of these things in the spec, but 
-they give an idea of what features people have found useful.
-Other information:
-
-* API Reference: http://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/Welcome.html
-* Visibility Timeouts: http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html
-
-Apache Kafka
-Apache Kafka is an Apache open source project based upon TCP for 
-distributed streaming. It prescribes some interesting general 
-purpose features that seem to extend far beyond the simpler 
-streaming model SECEVENTs is after. A comment from MS has been that 
-Kafka does an acknowledge with poll combination event which seems 
-to be a performance advantage. See: https://kafka.apache.org/intro
-
-Google Pub/Sub
-Google Pub Sub system favours a model whereby polling and acknowledgement
-of events is done as separate endpoints as separate functions.
-Information:
-
-* Cloud Overview - https://cloud.google.com/pubsub/
-* Subscriber Overview - https://cloud.google.com/pubsub/docs/subscriber
-* Subscriber Pull(poll) - https://cloud.google.com/pubsub/docs/pull
 
 Acknowledgments
 ===============
-The editors would like to thanks the members of the SCIM WG which 
+The authors would like to thank the members of the SCIM WG which
 began discussions of provisioning events starting with: draft-hunt-scim-notify-00 in 2015.
 
-The editors would like to thank the authors of draft-ietf-secevent-delivery-02,
-on which this draft is based.
-
-The editor would like to thank the participants in the the SECEVENTS
-working group for their support of this specification.
+The authors would like to thank the authors of draft-ietf-secevent-delivery-02, on which this draft is based.
 
 Change Log
 ==========
-Draft 00 - AB - Based on draft-ietf-secevent-delivery-02 with the 
-following changes:
+Draft 00 - AB - Based on draft-ietf-secevent-delivery-02 with the following changes:
 
 * Renamed to "Push-Based SET Token Delivery Using HTTP"
 * Removed references to the HTTP Polling delivery method.
 * Removed informative reference to RFC6202.
+
+Draft 01 - AB:
+
+* Removed all text related to Event Streams.
+* Added "SET Receipt Endpoint" definition.
+* Removed Subject and Event definitions (already defined in SET).
+* Removed NumericDate definiton (unused).
+* Removed "Event Streams" definition (now unused).
+* Replaced "Event Transmitter" with "SET Transmitter".
+* Replaced "Event Receiver" with "SET Receiver".
+* Replaced "Event Receiver endpoint" with "SET Receipt Endpoint".
+* Removed enumeration of HTTP authentication schemes.
+* Revised text related to authentication schemes and denial-of-service protection, and moved it to Security Considerations.
+* Removed generally applicable guidance regarding HTTP, TLS, authorization tokens, and bearer tokens.
+* Moved text regarding using JWS to determine authenticity of retained SETs to Security Considerations.
+* Added guidance regarding retries and non-transient error conditions.
+* Added IANA registry for SET delivery error codes.
