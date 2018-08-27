@@ -69,17 +69,17 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 Table of Contents
 
    1.  Introduction and Overview . . . . . . . . . . . . . . . . . .   2
-     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   2
      1.2.  Definitions . . . . . . . . . . . . . . . . . . . . . . .   3
-   2.  SET Event Stream Protocol . . . . . . . . . . . . . . . . . .   3
-     2.1.  Event Delivery Process  . . . . . . . . . . . . . . . . .   4
-     2.2.  Push Delivery using HTTP  . . . . . . . . . . . . . . . .   5
-     2.3.  Error Response Handling . . . . . . . . . . . . . . . . .   7
+   2.  Event Delivery  . . . . . . . . . . . . . . . . . . . . . . .   3
+     2.1.  Event Delivery Process  . . . . . . . . . . . . . . . . .   3
+     2.2.  Push Delivery using HTTP  . . . . . . . . . . . . . . . .   4
+     2.3.  Error Response Handling . . . . . . . . . . . . . . . . .   6
    3.  Authentication and Authorization  . . . . . . . . . . . . . .   8
      3.1.  Use of Tokens as Authorizations . . . . . . . . . . . . .   9
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
      4.1.  Authentication Using Signed SETs  . . . . . . . . . . . .   9
-     4.2.  HTTP Considerations . . . . . . . . . . . . . . . . . . .  10
+     4.2.  HTTP Considerations . . . . . . . . . . . . . . . . . . .   9
      4.3.  TLS Support Considerations  . . . . . . . . . . . . . . .  10
      4.4.  Authorization Token Considerations  . . . . . . . . . . .  10
        4.4.1.  Bearer Token Considerations . . . . . . . . . . . . .  10
@@ -88,22 +88,22 @@ Table of Contents
    7.  Normative References  . . . . . . . . . . . . . . . . . . . .  11
    Appendix A.  Other Streaming Specifications . . . . . . . . . . .  13
    Appendix B.  Acknowledgments  . . . . . . . . . . . . . . . . . .  14
-   Appendix C.  Change Log . . . . . . . . . . . . . . . . . . . . .  15
+   Appendix C.  Change Log . . . . . . . . . . . . . . . . . . . . .  14
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  15
 
 1.  Introduction and Overview
 
-   This specification defines how a stream of SETs (see [SET]) can be
-   transmitted to a previously registered Event Receiver using HTTP
-   [RFC7231] over TLS.  The specification defines a method to push SETs
-   via HTTP POST.
+   This specification defines how SETs (see [SET]) can be transmitted to
+   a previously registered Event Receiver using HTTP [RFC7231] over TLS.
+   The specification defines a method to push SETs via HTTP POST.
 
-   This specification defines a method for SET delivery in what is known
-   as Event Streams.
+1.1.  Notational Conventions
 
-   This specification does not define the method by which Event Streams
-   are defined, provisioned, managed, monitored, and configured and is
-   out of scope of this specification.
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
 
 
 
@@ -113,14 +113,6 @@ Backman, et al.         Expires January 21, 2019                [Page 2]
 
 Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
-
-1.1.  Notational Conventions
-
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in BCP
-   14 [RFC2119] [RFC8174] when, and only when, they appear in all
-   capitals, as shown here.
 
    For purposes of readability examples are not URL encoded.
    Implementers MUST percent encode URLs as described in Section 2.1 of
@@ -138,43 +130,19 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
    Event Transmitter
       A service provider that delivers SETs to other providers known as
-      Event Receivers.  An Event Transmitter is responsible for offering
-      a service that allows the Event Receiver to check the Event Stream
-      configuration and status known as the "Control Plane".
+      Event Receivers.
 
    Event Receiver
       A service provider that registers to receive SETs from an Event
       Transmitter and provides an endpoint to receive SETs via HTTP
-      POST.  Event Receivers can check current Event Stream
-      configuration and status by accessing the Event Transmitters
-      "Control Plane".
+      POST.
 
-   Event Stream
-      An Event Stream is a defined location, distribution method and
-      whereby an Event Transmitter and Event Receiver exchange a pre-
-      defined family of SETs.  A Stream is assumed to have configuration
-      data such as HTTP endpoints, timeouts, public key sets for signing
-      and encryption, and Event Families.
-
-2.  SET Event Stream Protocol
-
-   An Event Stream represents the communication channel over which a
-   series of SETs are delivered to a configured Event Receiver.
-
-
-
-
-
-Backman, et al.         Expires January 21, 2019                [Page 3]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
+2.  Event Delivery
 
 2.1.  Event Delivery Process
 
    When an Event occurs, the Event Transmitter constructs a SET token
-   [SET] that describes the Event.  The Event Transmitter determines the
-   Event Streams over which the SET should be distributed to.
+   [SET] that describes the Event.
 
    How SETs are defined and the process by which Events are identified
    for Event Receivers is out-of-scope of this specification.
@@ -194,6 +162,14 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
    Receiver.  The HTTP request body is a JSON Web Token [RFC7519] with a
    "Content-Type" header of "application/secevent+jwt" as defined in
    Section 2.2 and 6.2 of [SET].  Upon receipt, the Event Receiver
+
+
+
+Backman, et al.         Expires January 21, 2019                [Page 3]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
+
    acknowledges receipt with a response with HTTP Status 202, as
    described below in Section 2.2.
 
@@ -216,29 +192,15 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
    to report Event errors other than relating to the parsing and
    validation of the SET.
 
-
-
-
-
-
-Backman, et al.         Expires January 21, 2019                [Page 4]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
 2.2.  Push Delivery using HTTP
 
    This method allows an Event Transmitter to use HTTP POST
    (Section 4.3.3 [RFC7231]) to deliver SETs to a previously registered
-   web callback URI supplied by the Event Receiver as part of an Event
-   Stream configuration process (not defined by this document).
+   web callback URI supplied by the Event Receiver as part of a
+   configuration process (not defined by this document).
 
    The SET to be delivered MAY be signed and/or encrypted as defined in
    [SET].
-
-   The Event Stream configuration defines a URI of an Event Receiver
-   provided endpoint which accepts HTTP POST requests (e.g.
-   "https://rp.example.com/Events").
 
    The HTTP Content-Type (see Section 3.1.1.5 [RFC7231]) for the HTTP
    POST is "application/secevent+jwt" and SHALL consist of a single SET
@@ -248,6 +210,21 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
    To deliver an Event, the Event Transmitter generates an event
    delivery message and uses HTTP POST to the configured endpoint with
    the appropriate "Accept" and "Content-Type" headers.
+
+
+
+
+
+
+
+
+
+
+
+Backman, et al.         Expires January 21, 2019                [Page 4]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
 
    POST /Events  HTTP/1.1
 
@@ -274,14 +251,6 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
    Upon receipt of the request, the Event Receiver SHALL validate the
    JWT structure of the SET as defined in Section 7.2 [RFC7519].  The
-
-
-
-Backman, et al.         Expires January 21, 2019                [Page 5]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
    Event Receiver SHALL also validate the SET information as described
    in Section 2 [SET].
 
@@ -305,6 +274,14 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
    Note that the purpose of the "acknowledgement" response is to let the
    Event Transmitter know that a SET has been delivered and the
+
+
+
+Backman, et al.         Expires January 21, 2019                [Page 5]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
+
    information no longer needs to be retained by the Event Transmitter.
    Before acknowledgement, Event Receivers SHOULD ensure they have
    validated received SETs and retained them in a manner appropriate to
@@ -323,21 +300,6 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
    The following is an example non-normative error response.
 
-
-
-
-
-
-
-
-
-
-
-Backman, et al.         Expires January 21, 2019                [Page 6]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
    HTTP/1.1 400 Bad Request
    Content-Type: application/json
 
@@ -352,6 +314,29 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 2.3.  Error Response Handling
 
    If a SET is invalid, the following error codes are defined:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Backman, et al.         Expires January 21, 2019                [Page 6]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
 
    +-----------+-------------------------------------------------------+
    | Err Value | Description                                           |
@@ -385,15 +370,6 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
                             Table 1: SET Errors
 
-
-
-
-
-Backman, et al.         Expires January 21, 2019                [Page 7]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
    An error response SHALL include a JSON object which provides details
    about the error.  The JSON object includes the JSON attributes:
 
@@ -406,6 +382,17 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
    When included as part of an HTTP Status 400 response, the above JSON
    is the HTTP response body (see Figure 3).
+
+
+
+
+
+
+
+Backman, et al.         Expires January 21, 2019                [Page 7]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
 
 3.  Authentication and Authorization
 
@@ -443,13 +430,6 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
    indicate supported HTTP authentication schemes via the "WWW-
    Authenticate" header.
 
-
-
-Backman, et al.         Expires January 21, 2019                [Page 8]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
    Because SET Delivery describes a simple function, authorization for
    the ability to pick-up or deliver SETs can be derived by considering
    the identity of the SET issuer, or via an authentication method
@@ -461,6 +441,15 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
    For illustrative purposes only, SET delivery examples show an OAuth2
    bearer token value [RFC6750] in the authorization header.  This is
    not intended to imply that bearer tokens are preferred.  However, the
+
+
+
+
+Backman, et al.         Expires January 21, 2019                [Page 8]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
+
    use of bearer tokens in the specification does reflect common
    practice.
 
@@ -498,14 +487,6 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
    In scenarios where HTTP authorization or TLS mutual authentication
    are not used or are considered weak, JWS signed SETs SHOULD be used
    (see [RFC7515] and Security Considerations [SET]).  This enables the
-
-
-
-Backman, et al.         Expires January 21, 2019                [Page 9]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
    Event Receiver to validate that the SET issuer is authorized to
    deliver SETs.
 
@@ -517,6 +498,14 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
    As stated in Section 2.7.1 [RFC7230], an HTTP requestor MUST NOT
    generate the "userinfo" (i.e., username and password) component (and
+
+
+
+Backman, et al.         Expires January 21, 2019                [Page 9]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
+
    its "@" delimiter) when an "http" URI reference is generated with a
    message as they are now disallowed in HTTP.
 
@@ -554,14 +543,6 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
    Implementations supporting OAuth bearer tokens need to factor in
    security considerations of this authorization method [RFC7521].
-
-
-
-Backman, et al.         Expires January 21, 2019               [Page 10]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
    Since security is only as good as the weakest link, implementers also
    need to consider authentication choices coupled with OAuth bearer
    tokens.  The security considerations of the default authentication
@@ -572,14 +553,19 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
    SET tokens, however this information is provided as a resource to
    implementers.
 
+
+
+
+
+Backman, et al.         Expires January 21, 2019               [Page 10]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
+
 5.  Privacy Considerations
 
    If a SET needs to be retained for audit purposes, JWS MAY be used to
    provide verification of its authenticity.
-
-   Event Transmitters SHOULD attempt to specialize Event Streams so that
-   the content is targeted to the specific business and protocol needs
-   of subscribers.
 
    When sharing personally identifiable information or information that
    is otherwise considered confidential to affected users, Event
@@ -608,16 +594,6 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
               <https://www.rfc-editor.org/info/rfc3986>.
 
-
-
-
-
-
-Backman, et al.         Expires January 21, 2019               [Page 11]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246,
               DOI 10.17487/RFC5246, August 2008, <https://www.rfc-
@@ -633,6 +609,14 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
    [RFC6749]  Hardt, D., Ed., "The OAuth 2.0 Authorization Framework",
               RFC 6749, DOI 10.17487/RFC6749, October 2012,
               <https://www.rfc-editor.org/info/rfc6749>.
+
+
+
+
+Backman, et al.         Expires January 21, 2019               [Page 11]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
 
    [RFC6750]  Jones, M. and D. Hardt, "The OAuth 2.0 Authorization
               Framework: Bearer Token Usage", RFC 6750,
@@ -667,13 +651,6 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
               and Authorization Grants", RFC 7521, DOI 10.17487/RFC7521,
               May 2015, <https://www.rfc-editor.org/info/rfc7521>.
 
-
-
-Backman, et al.         Expires January 21, 2019               [Page 12]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
    [RFC7525]  Sheffer, Y., Holz, R., and P. Saint-Andre,
               "Recommendations for Secure Use of Transport Layer
               Security (TLS) and Datagram Transport Layer Security
@@ -687,6 +664,15 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+
+
+
+
+Backman, et al.         Expires January 21, 2019               [Page 12]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
 
    [SET]      Hunt, P., Ed., Jones, M., Denniss, W., and M. Ansari,
               "Security Event Token (SET)", RFC 8417,
@@ -722,14 +708,6 @@ Appendix A.  Other Streaming Specifications
    persistence so they can have their own internal delivery guarantees.
    The long tail of OIDC clients may not care about that, or may fail to
    get it right.  Regardless, I think we can learn something from the
-
-
-
-Backman, et al.         Expires January 21, 2019               [Page 13]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
    Delivery Policies supported by SNS, as well as the delivery controls
    that SQS offers (e.g.  Visibility Timeout, Dead-Letter Queues).  I'm
    not suggesting that we need all of these things in the spec, but they
@@ -744,6 +722,13 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
    o  Visibility Timeouts:
       http://docs.aws.amazon.com/AWSSimpleQueueService/latest/
       SQSDeveloperGuide/sqs-visibility-timeout.html
+
+
+
+Backman, et al.         Expires January 21, 2019               [Page 13]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
 
    Apache Kafka
 
@@ -778,14 +763,6 @@ Appendix B.  Acknowledgments
    The editors would like to thank the authors of draft-ietf-secevent-
    delivery-02, on which this draft is based.
 
-
-
-
-Backman, et al.         Expires January 21, 2019               [Page 14]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
    The editor would like to thank the participants in the the SECEVENTS
    working group for their support of this specification.
 
@@ -799,6 +776,15 @@ Appendix C.  Change Log
    o  Removed references to the HTTP Polling delivery method.
 
    o  Removed informative reference to RFC6202.
+
+
+
+
+
+Backman, et al.         Expires January 21, 2019               [Page 14]
+
+Internet-Draft        draft-ietf-secevent-http-push            July 2018
+
 
 Authors' Addresses
 
@@ -833,15 +819,6 @@ Authors' Addresses
    Email: morteza.ansari@cisco.com
 
 
-
-
-
-
-Backman, et al.         Expires January 21, 2019               [Page 15]
-
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
-
-
    Anthony Nadalin
    Microsoft
 
@@ -860,37 +837,4 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Backman, et al.         Expires January 21, 2019               [Page 16]
+Backman, et al.         Expires January 21, 2019               [Page 15]

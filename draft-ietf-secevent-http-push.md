@@ -60,17 +60,10 @@ using HTTP POST over TLS initiated as a push to the receiver.
 --- middle
 Introduction and Overview {#intro}
 =========================
-This specification defines how a stream of SETs (see
+This specification defines how SETs (see
 {{!SET}}) can be transmitted to a previously 
 registered Event Receiver using HTTP {{!RFC7231}} over TLS. The
 specification defines a method to push SETs via HTTP POST. 
-
-This specification defines a method for SET delivery in what
-is known as Event Streams.
-
-This specification does not define the method by which Event 
-Streams are defined, provisioned, managed, monitored,
-and configured and is out of scope of this specification.
 
 Notational Conventions {#conv}
 ----------------------
@@ -97,35 +90,20 @@ Event Token specification {{!SET}}, as well as the terms defined below:
 {: vspace="0"}
 Event Transmitter
 : A service provider that delivers SETs to other providers known
-as Event Receivers. An Event Transmitter is responsible for offering a
-service that allows the Event Receiver to check the Event Stream
-configuration and status known as the "Control Plane". 
+as Event Receivers.
 
 Event Receiver
 : A service provider that registers to receive SETs from an Event
 Transmitter and provides an endpoint to receive SETs via HTTP POST. 
-Event Receivers can check current Event Stream configuration and status
-by accessing the Event Transmitters "Control Plane".
-
-Event Stream
-: An Event Stream is a defined location, distribution method and
-whereby an Event Transmitter and Event Receiver exchange a pre-
-defined family of SETs. A Stream is assumed to have configuration data
-such as HTTP endpoints, timeouts, public key sets for signing and
-encryption, and Event Families.
 
 
-SET Event Stream Protocol {#event_stream}
-=========================
-An Event Stream represents the communication channel over which a 
-series of SETs are delivered to a configured Event Receiver. 
+Event Delivery {#event_delivery}
+=======================
 
-Event Delivery Process {#event_delivery}
+Event Delivery Process {#event_delivery_process}
 ----------------------
 When an Event occurs, the Event Transmitter constructs a SET
-token {{!SET}} that describes the Event. The Event Transmitter
-determines the Event Streams over which the SET should be distributed
-to.
+token {{!SET}} that describes the Event.
  
 How SETs are defined and the process by which Events are identified for 
 Event Receivers is out-of-scope of this    specification.
@@ -171,15 +149,11 @@ Push Delivery using HTTP {#httpPost}
 This method allows an Event Transmitter to use HTTP POST 
 (Section 4.3.3 {{!RFC7231}}) to deliver
 SETs to a previously registered web callback URI supplied by the
-Event Receiver as part of an Event Stream configuration process 
+Event Receiver as part of a configuration process 
 (not defined by this document).
 
 The SET to be delivered MAY be signed 
 and/or encrypted as defined in {{!SET}}.
-
-The Event Stream configuration defines a URI of an Event 
-Receiver provided endpoint which accepts HTTP POST requests (e.g. 
-`https://rp.example.com/Events`).
 
 The HTTP Content-Type (see 
 Section 3.1.1.5 {{!RFC7231}}) for the HTTP POST is 
@@ -467,10 +441,6 @@ Privacy Considerations
 
 If a SET needs to be retained for audit purposes, JWS MAY 
 be used to provide verification of its authenticity.
-
-Event Transmitters SHOULD attempt to specialize Event Streams 
-so that the content is targeted to the specific business and 
-protocol needs of subscribers.
 
 When sharing personally identifiable information or information
 that is otherwise considered confidential to affected users, Event 
