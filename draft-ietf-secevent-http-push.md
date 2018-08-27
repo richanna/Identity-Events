@@ -51,16 +51,6 @@ author:
 
 normative:
     SET: RFC8417
-    POSIX.1:
-        title: The Open Group Base Specifications Issue 7
-        author:
-        -
-            org: Institute of Electrical and Electronics Engineers
-        date: 2013
-        seriesinfo:
-            IEEE: Std 1003.1, 2013 Edition
-        format:
-            HTML: http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_15
 
 --- abstract
 This specification defines how a series of security event tokens 
@@ -102,9 +92,7 @@ readability reasons.
 Definitions {#defn}
 -------------------
 This specification assumes terminology defined in the Security
-Event Token specification {{!SET}}.
-
-The following definitions are defined for Security Event distribution:
+Event Token specification {{!SET}}, as well as the terms defined below:
 
 {: vspace="0"}
 Event Transmitter
@@ -126,25 +114,6 @@ defined family of SETs. A Stream is assumed to have configuration data
 such as HTTP endpoints, timeouts, public key sets for signing and
 encryption, and Event Families.
 
-Subject
-: The security subject around which a security event has occurred. For
-example, a security subject might per a user, a person, an email
-address, a service provider entity, an IP address, an OAuth Client, a
-mobile device, or any identifiable thing referenced in security and
-authorization systems.
-
-Event
-: An Event is defined to be an event as represented by a security event
-token (SET).  See {{!SET}}.
-
-NumericDate
-: A JSON numeric value representing the number of seconds from
-1970-01-01T00:00:00Z UTC until the specified UTC date/time, ignoring
-leap seconds.  This is equivalent to the IEEE Std 1003.1, 2013 Edition
-[POSIX.1](#POSIX.1) definition "Seconds Since the Epoch", in
-which each day is accounted for by exactly 86400 seconds, other than
-that non-integer values can be represented.  See {{!RFC3339}} for
-details regarding date/times in general and UTC in particular.
 
 SET Event Stream Protocol {#event_stream}
 =========================
