@@ -50,7 +50,7 @@ author:
     email: tonynad@microsoft.com
 
 normative:
-    I-D.ietf-secevent-token: RFC8417
+    SET: RFC8417
     POSIX.1:
         title: The Open Group Base Specifications Issue 7
         author:
@@ -71,7 +71,7 @@ using HTTP POST over TLS initiated as a push to the receiver.
 Introduction and Overview {#intro}
 =========================
 This specification defines how a stream of SETs (see
-{{!I-D.ietf-secevent-token}}) can be transmitted to a previously 
+{{!SET}}) can be transmitted to a previously 
 registered Event Receiver using HTTP {{!RFC7231}} over TLS. The
 specification defines a method to push SETs via HTTP POST. 
 
@@ -102,7 +102,7 @@ readability reasons.
 Definitions {#defn}
 -------------------
 This specification assumes terminology defined in the Security
-Event Token specification {{!I-D.ietf-secevent-token}}.
+Event Token specification {{!SET}}.
 
 The following definitions are defined for Security Event distribution:
 
@@ -135,7 +135,7 @@ authorization systems.
 
 Event
 : An Event is defined to be an event as represented by a security event
-token (SET).  See {{!I-D.ietf-secevent-token}}.
+token (SET).  See {{!SET}}.
 
 NumericDate
 : A JSON numeric value representing the number of seconds from
@@ -154,7 +154,7 @@ series of SETs are delivered to a configured Event Receiver.
 Event Delivery Process {#event_delivery}
 ----------------------
 When an Event occurs, the Event Transmitter constructs a SET
-token {{!I-D.ietf-secevent-token}} that describes the Event. The Event Transmitter
+token {{!SET}} that describes the Event. The Event Transmitter
 determines the Event Streams over which the SET should be distributed
 to.
  
@@ -174,7 +174,7 @@ In Push-Based SET Delivery Using HTTP, SETs are delivered one at a
 time using HTTP POST requests by an Event Transmitter to an Event
 Receiver. The HTTP request body is a JSON Web Token {{!RFC7519}}
 with a `Content-Type` header of `application/secevent+jwt` as
-defined in Section 2.2 and 6.2 of {{!I-D.ietf-secevent-token}}. Upon receipt, the 
+defined in Section 2.2 and 6.2 of {{!SET}}. Upon receipt, the 
 Event Receiver acknowledges receipt with a response with HTTP 
 Status 202, as described below in {{httpPost}}.
 
@@ -206,7 +206,7 @@ Event Receiver as part of an Event Stream configuration process
 (not defined by this document).
 
 The SET to be delivered MAY be signed 
-and/or encrypted as defined in {{!I-D.ietf-secevent-token}}.
+and/or encrypted as defined in {{!SET}}.
 
 The Event Stream configuration defines a URI of an Event 
 Receiver provided endpoint which accepts HTTP POST requests (e.g. 
@@ -215,7 +215,7 @@ Receiver provided endpoint which accepts HTTP POST requests (e.g.
 The HTTP Content-Type (see 
 Section 3.1.1.5 {{!RFC7231}}) for the HTTP POST is 
 `application/secevent+jwt` and SHALL consist of 
-a single SET (see {{!I-D.ietf-secevent-token}}).
+a single SET (see {{!SET}}).
 As per Section 5.3.2 {{!RFC7231}}, the expected 
 media type (`Accept` header) response is 
 `application/json`.
@@ -253,7 +253,7 @@ Upon receipt of the request, the Event Receiver SHALL
 validate the JWT structure of the SET as defined in 
 Section 7.2 {{!RFC7519}}. The Event Receiver 
 SHALL also validate the SET information as described
-in Section 2 {{!I-D.ietf-secevent-token}}.
+in Section 2 {{!SET}}.
 
 If the SET is determined to be valid, the Event Receiver SHALL
 "acknowledge" successful submission by responding with HTTP Status
@@ -290,7 +290,7 @@ MAY respond with an appropriate HTTP Status code as defined in
 Section 6 {{!RFC7231}}.
 
 When the Event Receiver detects an error parsing or 
-validating a received SET (as defined by {{!I-D.ietf-secevent-token}}), 
+validating a received SET (as defined by {{!SET}}), 
 the Event Receiver SHALL indicate an HTTP Status 400 error with an 
 error code as described in {{errorResponse}}.
 
@@ -435,7 +435,7 @@ Authentication Using Signed SETs {#payloadAuthentication}
 In scenarios where HTTP authorization or TLS mutual authentication
 are not used or are considered weak, JWS signed SETs SHOULD be 
 used (see {{!RFC7515}} and 
-Security Considerations {{!I-D.ietf-secevent-token}}). This enables the Event Receiver
+Security Considerations {{!SET}}). This enables the Event Receiver
 to validate that the SET issuer is authorized to deliver SETs.
 
 HTTP Considerations
