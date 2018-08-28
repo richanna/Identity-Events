@@ -49,6 +49,7 @@ author:
 
 normative:
     SET: RFC8417
+    BCP26: RFC8126
 
 --- abstract
 This specification defines how a series of security event tokens 
@@ -233,7 +234,7 @@ Section 6 {{!RFC7231}}.
 When the SET Receiver detects an error parsing or 
 validating a received SET (as defined by {{!SET}}), 
 the SET Receiver SHALL indicate an HTTP Status 400 error with an 
-error code as described in {{errorResponse}}.
+error response as described in {{errorResponse}}.
 
 The following is an example non-normative error 
 response.
@@ -250,10 +251,11 @@ Content-Type: application/json
 ~~~
 {: #badPostResponse title="Example HTTP Status 400 Response"}
 
-Error Response Handling {#errorResponse}
------------------------
+Security Event Token Delivery Error Codes {#error_codes}
+-----------------------------------------
+Security Event Token Delivery Error Codes are strings that identify a specific type of error that may occur when parsing or validating a SET. Every Security Event Token Delivery Error Code MUST have a unique name registered in the IANA "Security Event Token Delivery Error Codes" registry established by {{iana_set_errors}}.
 
-If a SET is invalid, the following error codes are defined:
+The following table presents the initial set of Error Codes that are registered in the IANA "Security Event Token Delivery Error Codes" registry:
 
 | Err Value | Description
 |-----------+-------------|
@@ -269,16 +271,17 @@ If a SET is invalid, the following error codes are defined:
 | setParse  | Invalid structure was encountered such as an inability to parse or an incomplete set of Event claims. |
 | setData   | SET event claims incomplete or invalid. |
 | dup       | A duplicate SET was received and has been ignored. |
-{: #reqErrors title="SET Errors"}
+{: #tabErrors title="SET Delivery Error Codes"}
 
+Error Response Handling {#errorResponse}
+-----------------------
 An error response SHALL include a JSON
 object which provides details about the error. The JSON object
 includes the JSON attributes:
 
 {: vspace="0"}
 err
-: A value which is a keyword that 
-describes the error (see {{reqErrors}}).
+: A Security Event Token Delivery Error Code (see {{error_codes}}).
 description
 : A human-readable text that provides
 additional diagnostic information.
@@ -454,7 +457,98 @@ the subject.
 IANA Considerations {#IANA}
 ===================
 
-There are no IANA considerations.
+Security Event Token Delivery Error Codes {#iana_set_errors}
+-----------------------------------------
+This document defines Security Event Token Delivery Error Codes, for which IANA is asked to create and maintain a new registry titled "Security Event Token Delivery Error Codes".  Initial values for the Security Event Token Delivery Error Codes registry are given in {{tabErrors}}.  Future assignments are to be made through the Expert Review registration policy ({{!BCP26}}) and shall follow the template presented in {{iana_set_errors_template}}.
+
+### Registration Template {#iana_set_errors_template}
+
+{: vspace="0"}
+Error Code
+: The name of the Security Event Token Delivery Error Code, as described in {{error_codes}}. The name MUST be a case-sensitive ASCII string consisting only of upper-case letters ("A" - "Z"), lower-case letters ("a" - "z"), and digits ("0" - "9").
+
+Descrption
+: A brief human-readable description of the Security Event Token Delivery Error Code.
+
+Change Controller
+: For error codes registered by the IETF or its working groups, list "IETF Secevent Working Group".  For all other error codes, list the name of the party responsible for the registration.  Contact information such as mailing address, email address, or phone number may also be provided.
+
+Defining Document(s)
+: A reference to the document or documents that define the Security Event Token Delivery Error Code. The definition MUST specify the name and description of the error code, and explain under what circumstances the error code may be used. URIs that can be used to retrieve copies of each document at no cost SHOULD be included.
+
+### Initial Registry Contents
+
+#### json
+* Name: json
+* Description: Invalid JSON object.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwtParse
+* Name: jwtParse
+* Description: Invalid or unparsable JWT or JSON structure.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwtHdr
+* Name: jwtHdr
+* Description: In invalid JWT header was detected.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwtCrypto
+* Name: jwtCrypto
+* Description: Unable to parse due to unsupported algorithm.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jws
+* Name: jws
+* Description: Signature was not validated.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwe
+* Name: jwe
+* Description: Unable to decrypt JWE encoded data.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwtAud
+* Name: jwtAud
+* Description: Invalid audience value.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### jwtIss
+* Name: jwtIss
+* Description: Issuer not recognized.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### setType
+* Name: setType
+* Description: An unexpected Event type was received.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### setParse
+* Name: setParse
+* Description: Invalid structure was encountered such as an inability to parse or an incomplete set of Event claims.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### setData
+* Name: setData
+* Description: SET event claims incomplete or invalid.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
+
+#### dup
+* Name: dup
+* Description: A duplicate SET was received and has been ignored.
+* Change Controller: IETF Secevent Working Group
+* Defining Document(s): {{error_codes}} of this document.
 
 --- back
 Other Streaming Specifications
@@ -545,3 +639,4 @@ Draft 01 - AB
 * Removed Mike Jones and Phil Hunt as editors, per respective requests.
 * Fixed area and workgroup to match secevent.
 * Renamed Event Transmitter and Event Receiver to SET Transmitter and SET Receiver, respectively.
+* Added IANA registry for SET Delivery Error Codes.
