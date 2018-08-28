@@ -76,7 +76,7 @@ Table of Contents
      2.2.  Transmitting a SET  . . . . . . . . . . . . . . . . . . .   4
      2.3.  Handling a SET Transmission Request . . . . . . . . . . .   5
        2.3.1.  Success Response  . . . . . . . . . . . . . . . . . .   5
-       2.3.2.  Failure Response  . . . . . . . . . . . . . . . . . .   6
+       2.3.2.  Failure Response  . . . . . . . . . . . . . . . . . .   5
        2.3.3.  Security Event Token Delivery Error Codes . . . . . .   6
        2.3.4.  Error Response Handling . . . . . . . . . . . . . . .   7
    3.  Authentication and Authorization  . . . . . . . . . . . . . .   8
@@ -95,7 +95,7 @@ Table of Contents
    Appendix A.  Other Streaming Specifications . . . . . . . . . . .  14
    Appendix B.  Acknowledgments  . . . . . . . . . . . . . . . . . .  15
    Appendix C.  Change Log . . . . . . . . . . . . . . . . . . . . .  15
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  16
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
 
 1.  Introduction and Overview
 
@@ -143,37 +143,11 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 2.1.  Event Delivery Process
 
-   When an Event occurs, the SET Transmitter constructs a SET token
-   [SET] that describes the Event.
-
-   How SETs are defined and the process by which Events are identified
-   for SET Receivers is out-of-scope of this specification.
-
-   When a SET is available for a SET Receiver, the SET Transmitter
-   attempts to deliver the SET based on the SET Receiver's registered
-   delivery mechanism:
-
-   o  The SET Transmitter uses an HTTP/1.1 POST to the SET Receiver
-      endpoint to deliver the SET;
-
-   o  Or, the SET Transmitter delivers the Event through a different
-      method not defined by this specification.
-
    In Push-Based SET Delivery Using HTTP, SETs are delivered one at a
-   time using HTTP POST requests by a SET Transmitter to a SET Receiver.
-   The HTTP request body is a JSON Web Token [RFC7519] with a "Content-
-
-
-
-Backman, et al.         Expires February 28, 2019               [Page 3]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
-
-   Type" header of "application/secevent+jwt" as defined in Section 2.2
-   and 6.2 of [SET].  Upon receipt, the SET Receiver acknowledges
-   receipt with a response with HTTP Status 202, as described below in
-   Section 2.2.
+   time using HTTP POST requests by a SET Transmitter to a SET Receiver,
+   as described below in Section 2.2.  Upon receipt, the SET Receiver
+   acknowledges receipt or indicates an error via the HTTP response, as
+   described below in Section 2.3.
 
    After successful (acknowledged) SET delivery, SET Transmitters SHOULD
    NOT be required to maintain or record SETs for recovery.  Once a SET
@@ -185,6 +159,16 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    later date when de-coupled from the original delivery where
    authenticity could be checked via the HTTP or TLS mutual
    authentication.
+
+
+
+
+
+
+Backman, et al.         Expires February 28, 2019               [Page 3]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
 
    Upon receiving a SET, the SET Receiver reads the SET and validates
    it.  The SET Receiver MUST acknowledge receipt to the SET
@@ -205,26 +189,9 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    [SET].
 
    The HTTP Content-Type (see Section 3.1.1.5 [RFC7231]) for the HTTP
-   POST is "application/secevent+jwt" and SHALL consist of a single SET
-   (see [SET]).  As per Section 5.3.2 [RFC7231], the expected media type
-   ("Accept" header) response is "application/json".
-
-   To deliver an Event, the SET Transmitter generates an event delivery
-   message and uses HTTP POST to the configured endpoint with the
-   appropriate "Accept" and "Content-Type" headers.
-
-
-
-
-
-
-
-
-
-Backman, et al.         Expires February 28, 2019               [Page 4]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
+   POST is "application/secevent+jwt" and the request body SHALL consist
+   of a single SET (see [SET]).  As per Section 5.3.2 [RFC7231], the
+   value of the "Accept" header is "application/json".
 
    POST /Events  HTTP/1.1
 
@@ -249,6 +216,16 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
                 Figure 1: Example SET Transmission Request
 
+
+
+
+
+
+Backman, et al.         Expires February 28, 2019               [Page 4]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
 2.3.  Handling a SET Transmission Request
 
    Upon receipt of the request, the SET Receiver SHALL validate the JWT
@@ -271,16 +248,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    The following is a non-normative example of a successful receipt of a
    SET.
-
-
-
-
-
-
-Backman, et al.         Expires February 28, 2019               [Page 5]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
 
    HTTP/1.1 202 Accepted
 
@@ -308,6 +275,13 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    The following is an example non-normative error response.
 
+
+
+Backman, et al.         Expires February 28, 2019               [Page 5]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
    HTTP/1.1 400 Bad Request
    Content-Type: application/json
 
@@ -330,6 +304,32 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    The following table presents the initial set of Error Codes that are
    registered in the IANA "Security Event Token Delivery Error Codes"
    registry:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -883,12 +883,12 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    o  Changed MAY to may in explanation of non-normative line breaks and
       whitespace in examples.
 
-Authors' Addresses
+   o  Removed unnecessary text about SET creation and aspects of SET
+      handling not related to the delivery method.
 
-   Annabelle Backman (editor)
-   Amazon
+   o  Removed duplicate technical description of delivery method
+      requests and responses.
 
-   Email: richanna@amazon.com
 
 
 
@@ -896,6 +896,14 @@ Authors' Addresses
 Backman, et al.         Expires February 28, 2019              [Page 16]
 
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
+Authors' Addresses
+
+   Annabelle Backman (editor)
+   Amazon
+
+   Email: richanna@amazon.com
 
 
    Michael B. Jones
@@ -927,14 +935,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    Microsoft
 
    Email: tonynad@microsoft.com
-
-
-
-
-
-
-
-
 
 
 

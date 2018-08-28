@@ -95,28 +95,11 @@ Event Delivery {#event_delivery}
 
 Event Delivery Process {#event_delivery_process}
 ----------------------
-When an Event occurs, the SET Transmitter constructs a SET
-token {{!SET}} that describes the Event.
- 
-How SETs are defined and the process by which Events are identified for 
-SET Receivers is out-of-scope of this    specification.
-
-When a SET is available for a SET Receiver, the SET Transmitter
-attempts to deliver the SET based on the SET Receiver's registered
-delivery mechanism:
-
-* The SET Transmitter uses an HTTP/1.1 POST to the SET Receiver
-endpoint to deliver the SET;
-* Or, the SET Transmitter delivers the Event through a different
-method not defined by this specification.
-
 In Push-Based SET Delivery Using HTTP, SETs are delivered one at a
 time using HTTP POST requests by a SET Transmitter to a SET
-Receiver. The HTTP request body is a JSON Web Token {{!RFC7519}}
-with a `Content-Type` header of `application/secevent+jwt` as
-defined in Section 2.2 and 6.2 of {{!SET}}. Upon receipt, the 
-SET Receiver acknowledges receipt with a response with HTTP 
-Status 202, as described below in {{tx_request}}.
+Receiver, as described below in {{tx_request}}. Upon receipt,
+the SET Receiver acknowledges receipt or indicates an error
+via the HTTP response, as described below in {{tx_handling}}.
 
 After successful (acknowledged) SET delivery, SET 
 Transmitters SHOULD NOT be required to maintain or record SETs for 
@@ -150,16 +133,11 @@ and/or encrypted as defined in {{!SET}}.
 
 The HTTP Content-Type (see 
 Section 3.1.1.5 {{!RFC7231}}) for the HTTP POST is 
-`application/secevent+jwt` and SHALL consist of 
+`application/secevent+jwt` and the request body SHALL consist of 
 a single SET (see {{!SET}}).
-As per Section 5.3.2 {{!RFC7231}}, the expected 
-media type (`Accept` header) response is 
+As per Section 5.3.2 {{!RFC7231}}, the value of the
+`Accept` header is 
 `application/json`.
-
-To deliver an Event, the SET Transmitter generates an event 
-delivery message and uses HTTP POST to the configured endpoint with
-the appropriate `Accept` and 
-`Content-Type` headers.
 
 ~~~
 POST /Events  HTTP/1.1
@@ -542,3 +520,5 @@ Draft 01 - AB
 * Added missing blank line ahead of body in example request.
 * Removed unapplicable explanatory text regarding shortening and encoding of URLs in examples.
 * Changed MAY to may in explanation of non-normative line breaks and whitespace in examples.
+* Removed unnecessary text about SET creation and aspects of SET handling not related to the delivery method.
+* Removed duplicate technical description of delivery method requests and responses.
