@@ -172,7 +172,6 @@ POST /Events  HTTP/1.1
 
 Host: notify.examplerp.com
 Accept: application/json
-Authorization: Bearer h480djs93hd8
 Content-Type: application/secevent+jwt
 eyJhbGciOiJub25lIn0
 .
@@ -303,12 +302,6 @@ considering the identity of the SET issuer, or via other employed
 authentication methods.  Because SETs are
 not commands (see ), SET Receivers are free to ignore SETs that 
 are not of interest.
-
-For illustrative purposes only, SET delivery examples show an OAuth2
-bearer token value {{!RFC6750}} in the authorization header.
-This is not intended to imply that bearer tokens are
-preferred. However, the use of bearer tokens in the specification does
-reflect common practice. 
 
 
 Security Considerations {#Security}
@@ -547,3 +540,4 @@ Draft 01 - AB
 * Elaborated on guidance for DoS protection via authn, and moved it to Security Considerations.
 * Removed redundant instruction to use `WWW-Authenticate` header.
 * Removed further generally applicable guidance for authorization tokens.
+* Removed bearer token from example delivery request, and removed text explaining it was an example only.
