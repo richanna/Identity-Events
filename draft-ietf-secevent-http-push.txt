@@ -81,14 +81,15 @@ Table of Contents
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
      4.1.  Authentication Using Signed SETs  . . . . . . . . . . . .   9
      4.2.  TLS Support Considerations  . . . . . . . . . . . . . . .   9
+     4.3.  Denial of Service . . . . . . . . . . . . . . . . . . . .   9
    5.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .   9
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
-     6.1.  Security Event Token Delivery Error Codes . . . . . . . .   9
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  10
+     6.1.  Security Event Token Delivery Error Codes . . . . . . . .  10
        6.1.1.  Registration Template . . . . . . . . . . . . . . . .  10
        6.1.2.  Initial Registry Contents . . . . . . . . . . . . . .  10
    7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
      7.1.  Normative References  . . . . . . . . . . . . . . . . . .  13
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .  14
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  15
    Appendix A.  Other Streaming Specifications . . . . . . . . . . .  15
    Appendix B.  Acknowledgments  . . . . . . . . . . . . . . . . . .  16
    Appendix C.  Change Log . . . . . . . . . . . . . . . . . . . . .  16
@@ -105,7 +106,6 @@ Table of Contents
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
    "OPTIONAL" in this document are to be interpreted as described in BCP
-
 
 
 
@@ -407,10 +407,8 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    Because SET Delivery describes a simple function, authorization for
    the ability to pick-up or deliver SETs can be derived by considering
    the identity of the SET issuer, or via other employed authentication
-   methods.  This specification considers authentication as a feature to
-   prevent denial-of-service attacks.  Because SETs are not commands
-   (see ), SET Receivers are free to ignore SETs that are not of
-   interest.
+   methods.  Because SETs are not commands (see ), SET Receivers are
+   free to ignore SETs that are not of interest.
 
    For illustrative purposes only, SET delivery examples show an OAuth2
    bearer token value [RFC6750] in the authorization header.  This is
@@ -442,6 +440,8 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    considerations for the use of client authorizations (see Section 8 of
    [RFC7521]).  When using other token formats or frameworks,
    implementers MUST take into account similar threats and
+   countermeasures, especially those documented by the relevant
+   specifications.
 
 
 
@@ -449,9 +449,6 @@ Backman, et al.         Expires February 28, 2019               [Page 8]
 
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
-
-   countermeasures, especially those documented by the relevant
-   specifications.
 
 4.  Security Considerations
 
@@ -475,6 +472,16 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    considerations for TLS can be found in "Recommendations for Secure
    Use of TLS and DTLS" [RFC7525].
 
+4.3.  Denial of Service
+
+   The SET Receiver may be vulnerable to a denial-of-service attack
+   where a malicious party makes a high volume of requests containing
+   invalid SETs, causing the endpoint to expend significant resources on
+   cryptographic operations that are bound to fail.  This may be
+   mitigated by authenticating SET Transmitters with a mechanism with
+   low runtime overhead, such as mutual TLS or statically assigned
+   bearer tokens.
+
 5.  Privacy Considerations
 
    If a SET needs to be retained for audit purposes, JWS MAY be used to
@@ -491,13 +498,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    example, the passing of a hash value that requires the subscriber to
    already know the subject.
 
-6.  IANA Considerations
-
-6.1.  Security Event Token Delivery Error Codes
-
-   This document defines Security Event Token Delivery Error Codes, for
-   which IANA is asked to create and maintain a new registry titled
-   "Security Event Token Delivery Error Codes".  Initial values for the
 
 
 
@@ -506,6 +506,13 @@ Backman, et al.         Expires February 28, 2019               [Page 9]
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
+6.  IANA Considerations
+
+6.1.  Security Event Token Delivery Error Codes
+
+   This document defines Security Event Token Delivery Error Codes, for
+   which IANA is asked to create and maintain a new registry titled
+   "Security Event Token Delivery Error Codes".  Initial values for the
    Security Event Token Delivery Error Codes registry are given in
    Table 1.  Future assignments are to be made through the Expert Review
    registration policy ([BCP26]) and shall follow the template presented
@@ -547,13 +554,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
-
-6.1.2.2.  jwtParse
-
-   o  Name: jwtParse
-
-   o  Description: Invalid or unparsable JWT or JSON structure.
 
 
 
@@ -561,6 +561,14 @@ Backman, et al.         Expires February 28, 2019              [Page 10]
 
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
+
+   o  Defining Document(s): Section 2.3 of this document.
+
+6.1.2.2.  jwtParse
+
+   o  Name: jwtParse
+
+   o  Description: Invalid or unparsable JWT or JSON structure.
 
    o  Change Controller: IETF Secevent Working Group
 
@@ -602,14 +610,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Description: Unable to decrypt JWE encoded data.
 
-   o  Change Controller: IETF Secevent Working Group
-
-   o  Defining Document(s): Section 2.3 of this document.
-
-
-
-
-
 
 
 
@@ -617,6 +617,10 @@ Backman, et al.         Expires February 28, 2019              [Page 11]
 
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
+
+   o  Change Controller: IETF Secevent Working Group
+
+   o  Defining Document(s): Section 2.3 of this document.
 
 6.1.2.7.  jwtAud
 
@@ -659,13 +663,9 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Defining Document(s): Section 2.3 of this document.
 
-6.1.2.11.  setData
 
-   o  Name: setData
 
-   o  Description: SET event claims incomplete or invalid.
 
-   o  Change Controller: IETF Secevent Working Group
 
 
 
@@ -673,6 +673,14 @@ Backman, et al.         Expires February 28, 2019              [Page 12]
 
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
+
+6.1.2.11.  setData
+
+   o  Name: setData
+
+   o  Description: SET event claims incomplete or invalid.
+
+   o  Change Controller: IETF Secevent Working Group
 
    o  Defining Document(s): Section 2.3 of this document.
 
@@ -710,6 +718,18 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
               DOI 10.17487/RFC5246, August 2008, <https://www.rfc-
               editor.org/info/rfc5246>.
 
+
+
+
+
+
+
+
+Backman, et al.         Expires February 28, 2019              [Page 13]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
    [RFC6125]  Saint-Andre, P. and J. Hodges, "Representation and
               Verification of Domain-Based Application Service Identity
               within Internet Public Key Infrastructure Using X.509
@@ -720,15 +740,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    [RFC6749]  Hardt, D., Ed., "The OAuth 2.0 Authorization Framework",
               RFC 6749, DOI 10.17487/RFC6749, October 2012,
               <https://www.rfc-editor.org/info/rfc6749>.
-
-
-
-
-
-Backman, et al.         Expires February 28, 2019              [Page 13]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
 
    [RFC6750]  Jones, M. and D. Hardt, "The OAuth 2.0 Authorization
               Framework: Bearer Token Usage", RFC 6750,
@@ -767,17 +778,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
               DOI 10.17487/RFC8417, July 2018, <https://www.rfc-
               editor.org/info/rfc8417>.
 
-7.2.  Informative References
-
-   [RFC7525]  Sheffer, Y., Holz, R., and P. Saint-Andre,
-              "Recommendations for Secure Use of Transport Layer
-              Security (TLS) and Datagram Transport Layer Security
-              (DTLS)", BCP 195, RFC 7525, DOI 10.17487/RFC7525, May
-              2015, <https://www.rfc-editor.org/info/rfc7525>.
-
-
-
-
 
 
 
@@ -785,6 +785,14 @@ Backman, et al.         Expires February 28, 2019              [Page 14]
 
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
+
+7.2.  Informative References
+
+   [RFC7525]  Sheffer, Y., Holz, R., and P. Saint-Andre,
+              "Recommendations for Secure Use of Transport Layer
+              Security (TLS) and Datagram Transport Layer Security
+              (DTLS)", BCP 195, RFC 7525, DOI 10.17487/RFC7525, May
+              2015, <https://www.rfc-editor.org/info/rfc7525>.
 
 Appendix A.  Other Streaming Specifications
 
@@ -826,14 +834,6 @@ Appendix A.  Other Streaming Specifications
       http://docs.aws.amazon.com/AWSSimpleQueueService/latest/
       APIReference/Welcome.html
 
-   o  Visibility Timeouts:
-      http://docs.aws.amazon.com/AWSSimpleQueueService/latest/
-      SQSDeveloperGuide/sqs-visibility-timeout.html
-
-   Apache Kafka
-
-   Apache Kafka is an Apache open source project based upon TCP for
-   distributed streaming.  It prescribes some interesting general
 
 
 
@@ -842,6 +842,14 @@ Backman, et al.         Expires February 28, 2019              [Page 15]
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
+   o  Visibility Timeouts:
+      http://docs.aws.amazon.com/AWSSimpleQueueService/latest/
+      SQSDeveloperGuide/sqs-visibility-timeout.html
+
+   Apache Kafka
+
+   Apache Kafka is an Apache open source project based upon TCP for
+   distributed streaming.  It prescribes some interesting general
    purpose features that seem to extend far beyond the simpler streaming
    model SECEVENTs is after.  A comment from MS has been that Kafka does
    an acknowledge with poll combination event which seems to be a
@@ -883,6 +891,13 @@ Appendix C.  Change Log
 
    o  Removed references to the HTTP Polling delivery method.
 
+
+
+Backman, et al.         Expires February 28, 2019              [Page 16]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
    o  Removed informative reference to RFC6202.
 
    Draft 01 - AB
@@ -890,13 +905,6 @@ Appendix C.  Change Log
    o  Converted to Markdown
 
    o  Removed NumericDate definition (unused).
-
-
-
-Backman, et al.         Expires February 28, 2019              [Page 16]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
 
    o  Removed Event and Subject definitions (defined in SET).
 
@@ -917,6 +925,9 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    o  Removed generally applicable guidance for HTTP, authorization
       tokens, and bearer tokens.
 
+   o  Elaborated on guidance for DoS protection via authn, and moved it
+      to Security Considerations.
+
 Authors' Addresses
 
    Annabelle Backman (editor)
@@ -932,6 +943,17 @@ Authors' Addresses
    URI:   http://self-issued.info/
 
 
+
+
+
+
+
+
+Backman, et al.         Expires February 28, 2019              [Page 17]
+
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
    Phil Hunt
    Oracle
 
@@ -944,16 +966,6 @@ Authors' Addresses
    Email: mscurtescu@google.com
 
 
-
-
-
-
-
-Backman, et al.         Expires February 28, 2019              [Page 17]
-
-Internet-Draft        draft-ietf-secevent-http-push          August 2018
-
-
    Morteza Ansari
    Cisco
 
@@ -964,18 +976,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    Microsoft
 
    Email: tonynad@microsoft.com
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -304,8 +304,7 @@ schemes via the `WWW-Authenticate` header.
 Because SET Delivery describes a simple function, authorization
 for the ability to pick-up or deliver SETs can be derived by
 considering the identity of the SET issuer, or via other employed
-authentication methods. This specification considers authentication as a
-feature to prevent denial-of-service attacks. Because SETs are
+authentication methods.  Because SETs are
 not commands (see ), SET Receivers are free to ignore SETs that 
 are not of interest.
 
@@ -364,6 +363,9 @@ certificate check, per {{!RFC6125}}. Implementation
 security considerations for TLS can be found in "Recommendations for
 Secure Use of TLS and DTLS" {{?RFC7525}}.
 
+Denial of Service
+-----------------
+The SET Receiver may be vulnerable to a denial-of-service attack where a malicious party makes a high volume of requests containing invalid SETs, causing the endpoint to expend significant resources on cryptographic operations that are bound to fail. This may be mitigated by authenticating SET Transmitters with a mechanism with low runtime overhead, such as mutual TLS or statically assigned bearer tokens.
 
 Privacy Considerations
 ======================
@@ -570,3 +572,4 @@ Draft 01 - AB
 * Added IANA registry for SET Delivery Error Codes.
 * Removed enumeration of HTTP authentication methods.
 * Removed generally applicable guidance for HTTP, authorization tokens, and bearer tokens.
+* Elaborated on guidance for DoS protection via authn, and moved it to Security Considerations.
