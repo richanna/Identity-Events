@@ -231,6 +231,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    Host: notify.examplerp.com
    Accept: application/json
    Content-Type: application/secevent+jwt
+
    eyJhbGciOiJub25lIn0
    .
    eyJwdWJsaXNoZXJVcmkiOiJodHRwczovL3NjaW0uZXhhbXBsZS5jb20iLCJmZWV
@@ -271,9 +272,8 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    The following is a non-normative example of a successful receipt of a
    SET.
 
-   HTTP/1.1 202 Accepted
 
-              Figure 2: Example Successful Delivery Response
+
 
 
 
@@ -281,6 +281,10 @@ Backman, et al.         Expires February 28, 2019               [Page 5]
 
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
+
+   HTTP/1.1 202 Accepted
+
+              Figure 2: Example Successful Delivery Response
 
    Note that the purpose of the "acknowledgement" response is to let the
    SET Transmitter know that a SET has been delivered and the
@@ -326,10 +330,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    The following table presents the initial set of Error Codes that are
    registered in the IANA "Security Event Token Delivery Error Codes"
    registry:
-
-
-
-
 
 
 
@@ -883,12 +883,12 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    o  Broke delivery method description into separate request/response
       sections.
 
+   o  Added missing blank line ahead of body in example request.
+
 Authors' Addresses
 
-   Annabelle Backman (editor)
-   Amazon
 
-   Email: richanna@amazon.com
+
 
 
 
@@ -896,6 +896,12 @@ Authors' Addresses
 Backman, et al.         Expires February 28, 2019              [Page 16]
 
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
+
+
+   Annabelle Backman (editor)
+   Amazon
+
+   Email: richanna@amazon.com
 
 
    Michael B. Jones
@@ -927,12 +933,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    Microsoft
 
    Email: tonynad@microsoft.com
-
-
-
-
-
-
 
 
 

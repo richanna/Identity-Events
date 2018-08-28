@@ -173,6 +173,7 @@ POST /Events  HTTP/1.1
 Host: notify.examplerp.com
 Accept: application/json
 Content-Type: application/secevent+jwt
+
 eyJhbGciOiJub25lIn0
 .
 eyJwdWJsaXNoZXJVcmkiOiJodHRwczovL3NjaW0uZXhhbXBsZS5jb20iLCJmZWV
@@ -544,3 +545,4 @@ Draft 01 - AB
 * Removed further generally applicable guidance for authorization tokens.
 * Removed bearer token from example delivery request, and removed text explaining it was an example only.
 * Broke delivery method description into separate request/response sections.
+* Added missing blank line ahead of body in example request.
