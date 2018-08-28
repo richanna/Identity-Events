@@ -60,7 +60,7 @@ Introduction and Overview {#intro}
 =========================
 This specification defines how SETs (see
 {{!SET}}) can be transmitted to a previously 
-registered Event Receiver using HTTP {{!RFC7231}} over TLS. The
+registered SET Receiver using HTTP {{!RFC7231}} over TLS. The
 specification defines a method to push SETs via HTTP POST. 
 
 Notational Conventions {#conv}
@@ -86,12 +86,12 @@ This specification assumes terminology defined in the Security
 Event Token specification {{!SET}}, as well as the terms defined below:
 
 {: vspace="0"}
-Event Transmitter
+SET Transmitter
 : A service provider that delivers SETs to other providers known
-as Event Receivers.
+as SET Receivers.
 
-Event Receiver
-: A service provider that registers to receive SETs from an Event
+SET Receiver
+: A service provider that registers to receive SETs from an SET
 Transmitter and provides an endpoint to receive SETs via HTTP POST. 
 
 
@@ -100,54 +100,54 @@ Event Delivery {#event_delivery}
 
 Event Delivery Process {#event_delivery_process}
 ----------------------
-When an Event occurs, the Event Transmitter constructs a SET
+When an Event occurs, the SET Transmitter constructs a SET
 token {{!SET}} that describes the Event.
  
 How SETs are defined and the process by which Events are identified for 
-Event Receivers is out-of-scope of this    specification.
+SET Receivers is out-of-scope of this    specification.
 
-When a SET is available for an Event Receiver, the Event Transmitter
-attempts to deliver the SET based on the Event Receiver's registered
+When a SET is available for an SET Receiver, the SET Transmitter
+attempts to deliver the SET based on the SET Receiver's registered
 delivery mechanism:
 
-* The Event Transmitter uses an HTTP/1.1 POST to the Event Receiver
+* The SET Transmitter uses an HTTP/1.1 POST to the SET Receiver
 endpoint to deliver the SET;
-* Or, the Event Transmitter delivers the Event through a different
+* Or, the SET Transmitter delivers the Event through a different
 method not defined by this specification.
 
 In Push-Based SET Delivery Using HTTP, SETs are delivered one at a
-time using HTTP POST requests by an Event Transmitter to an Event
+time using HTTP POST requests by an SET Transmitter to an SET
 Receiver. The HTTP request body is a JSON Web Token {{!RFC7519}}
 with a `Content-Type` header of `application/secevent+jwt` as
 defined in Section 2.2 and 6.2 of {{!SET}}. Upon receipt, the 
-Event Receiver acknowledges receipt with a response with HTTP 
+SET Receiver acknowledges receipt with a response with HTTP 
 Status 202, as described below in {{httpPost}}.
 
-After successful (acknowledged) SET delivery, Event 
+After successful (acknowledged) SET delivery, SET 
 Transmitters SHOULD NOT be required to maintain or record SETs for 
-recovery. Once a SET is acknowledged, the Event Receiver SHALL be 
+recovery. Once a SET is acknowledged, the SET Receiver SHALL be 
 responsible for retention and recovery.
 
 Transmitted SETs SHOULD be self-validating (e.g. signed)
-if there is a requirement to verify they were issued by the Event 
+if there is a requirement to verify they were issued by the SET 
 Transmitter at a later date when de-coupled from the original 
 delivery where authenticity could be checked via the HTTP or 
 TLS mutual authentication.
 
-Upon receiving a SET, the Event Receiver reads the SET and validates 
-it. The Event Receiver MUST acknowledge receipt to the Event Transmitter, using the 
+Upon receiving a SET, the SET Receiver reads the SET and validates 
+it. The SET Receiver MUST acknowledge receipt to the SET Transmitter, using the 
 defined acknowledgement or error method.
 
-The Event Receiver SHALL NOT use the Event acknowledgement mechanism
+The SET Receiver SHALL NOT use the Event acknowledgement mechanism
 to report Event errors other than relating to the parsing and validation
 of the SET.
 
 Push Delivery using HTTP {#httpPost}
 ------------------------
-This method allows an Event Transmitter to use HTTP POST 
+This method allows an SET Transmitter to use HTTP POST 
 (Section 4.3.3 {{!RFC7231}}) to deliver
 SETs to a previously registered web callback URI supplied by the
-Event Receiver as part of a configuration process 
+SET Receiver as part of a configuration process 
 (not defined by this document).
 
 The SET to be delivered MAY be signed 
@@ -161,7 +161,7 @@ As per Section 5.3.2 {{!RFC7231}}, the expected
 media type (`Accept` header) response is 
 `application/json`.
 
-To deliver an Event, the Event Transmitter generates an event 
+To deliver an Event, the SET Transmitter generates an event 
 delivery message and uses HTTP POST to the configured endpoint with
 the appropriate `Accept` and 
 `Content-Type` headers.
@@ -190,20 +190,20 @@ tZSI6Impkb2UiLCJpZCI6IjQ0ZjYxNDJkZjk2YmQ2YWI2MWU3NTIxZDkiLCJuYW
 ~~~
 {: #postSet title="Example HTTP POST Request"}
 
-Upon receipt of the request, the Event Receiver SHALL 
+Upon receipt of the request, the SET Receiver SHALL 
 validate the JWT structure of the SET as defined in 
-Section 7.2 {{!RFC7519}}. The Event Receiver 
+Section 7.2 {{!RFC7519}}. The SET Receiver 
 SHALL also validate the SET information as described
 in Section 2 {{!SET}}.
 
-If the SET is determined to be valid, the Event Receiver SHALL
+If the SET is determined to be valid, the SET Receiver SHALL
 "acknowledge" successful submission by responding with HTTP Status
 202 as `Accepted` 
 (see Section 6.3.3 {{!RFC7231}}).
 
 In order
 to maintain compatibility with other methods of transmission, the 
-Event Receiver SHOULD NOT include an HTTP response body representation
+SET Receiver SHOULD NOT include an HTTP response body representation
 of the submitted SET or what the SET's pending status is when 
 acknowledging success. In the case of an error (e.g. HTTP Status 400),
 the purpose of the HTTP response body is to indicate any SET parsing, 
@@ -218,21 +218,21 @@ HTTP/1.1 202 Accepted
 {: #goodPostResponse title="Example Successful Delivery Response"}
 
 Note that the purpose of the "acknowledgement" response is to let the 
-Event Transmitter know that a SET has been delivered and the 
-information no longer needs to be retained by the Event Transmitter. 
-Before acknowledgement, Event Receivers SHOULD ensure they have 
+SET Transmitter know that a SET has been delivered and the 
+information no longer needs to be retained by the SET Transmitter. 
+Before acknowledgement, SET Receivers SHOULD ensure they have 
 validated received SETs and retained them in a manner appropriate 
 to information retention requirements appropriate to the SET 
 event types signaled. The level and method of retention of SETs
-by Event Receivers is out-of-scope of this specification.
+by SET Receivers is out-of-scope of this specification.
 
-In the Event of a general HTTP error condition, the Event Receiver
+In the Event of a general HTTP error condition, the SET Receiver
 MAY respond with an appropriate HTTP Status code as defined in 
 Section 6 {{!RFC7231}}.
 
-When the Event Receiver detects an error parsing or 
+When the SET Receiver detects an error parsing or 
 validating a received SET (as defined by {{!SET}}), 
-the Event Receiver SHALL indicate an HTTP Status 400 error with an 
+the SET Receiver SHALL indicate an HTTP Status 400 error with an 
 error code as described in {{errorResponse}}.
 
 The following is an example non-normative error 
@@ -321,7 +321,7 @@ SET Payload Authentication
 : In scenarios 
 where SETs are signed and
 the delivery method is HTTP POST (see {{httpPost}}),
-Event Receivers MAY elect to use Basic Authentication or not 
+SET Receivers MAY elect to use Basic Authentication or not 
 to use HTTP or TLS based authentication at all. See 
 {{payloadAuthentication}} for considerations.
 
@@ -334,7 +334,7 @@ for the ability to pick-up or deliver SETs can be derived by
 considering the identity of the SET issuer, or via an authentication
 method above. This specification considers authentication as a
 feature to prevent denial-of-service attacks. Because SETs are
-not commands (see ), Event Receivers are free to ignore SETs that 
+not commands (see ), SET Receivers are free to ignore SETs that 
 are not of interest.
 
 For illustrative purposes only, SET delivery examples show an OAuth2
@@ -376,7 +376,7 @@ Authentication Using Signed SETs {#payloadAuthentication}
 In scenarios where HTTP authorization or TLS mutual authentication
 are not used or are considered weak, JWS signed SETs SHOULD be 
 used (see {{!RFC7515}} and 
-Security Considerations {{!SET}}). This enables the Event Receiver
+Security Considerations {{!SET}}). This enables the SET Receiver
 to validate that the SET issuer is authorized to deliver SETs.
 
 HTTP Considerations
@@ -393,8 +393,8 @@ disallowed in HTTP.
 TLS Support Considerations
 --------------------------
 SETs contain sensitive information that is considered PII
-(e.g. subject claims). Therefore, Event Transmitters and
-Event Receivers MUST require the use of a transport-layer 
+(e.g. subject claims). Therefore, SET Transmitters and
+SET Receivers MUST require the use of a transport-layer 
 security mechanism. Event delivery endpoints MUST support TLS 
 1.2 {{!RFC5246}} and MAY support additional 
 transport-layer mechanisms meeting its security requirements. 
@@ -441,12 +441,12 @@ If a SET needs to be retained for audit purposes, JWS MAY
 be used to provide verification of its authenticity.
 
 When sharing personally identifiable information or information
-that is otherwise considered confidential to affected users, Event 
+that is otherwise considered confidential to affected users, SET 
 Transmitters and Receivers MUST have the appropriate legal agreements
 and user consent or terms of service in place.
 
 The propagation of subject identifiers can be perceived as personally
-identifiable information. Where possible, Event Transmitters and Receivers
+identifiable information. Where possible, SET Transmitters and Receivers
 SHOULD devise approaches that prevent propagation --- for example, the
 passing of a hash value that requires the subscriber to already know
 the subject.
@@ -535,3 +535,13 @@ following changes:
 * Renamed to "Push-Based SET Token Delivery Using HTTP"
 * Removed references to the HTTP Polling delivery method.
 * Removed informative reference to RFC6202.
+
+Draft 01 - AB
+
+* Converted to Markdown
+* Removed NumericDate definition (unused).
+* Removed Event and Subject definitions (defined in SET).
+* Removed text related to Event Streams.
+* Removed Mike Jones and Phil Hunt as editors, per respective requests.
+* Fixed area and workgroup to match secevent.
+* Renamed Event Transmitter and Event Receiver to SET Transmitter and SET Receiver, respectively.

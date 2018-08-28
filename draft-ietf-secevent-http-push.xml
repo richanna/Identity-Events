@@ -78,7 +78,7 @@ using HTTP POST over TLS initiated as a push to the receiver.</t>
 <section anchor="intro" title="Introduction and Overview">
 <t>This specification defines how SETs (see
 <xref target="SET"/>) can be transmitted to a previously 
-registered Event Receiver using HTTP <xref target="RFC7231"/> over TLS. The
+registered SET Receiver using HTTP <xref target="RFC7231"/> over TLS. The
 specification defines a method to push SETs via HTTP POST.</t>
 
 <section anchor="conv" title="Notational Conventions">
@@ -103,11 +103,11 @@ readability reasons.</t>
 Event Token specification <xref target="SET"/>, as well as the terms defined below:</t>
 
 <t><list style="hanging">
-  <t hangText='Event Transmitter'><vspace blankLines='0'/>
+  <t hangText='SET Transmitter'><vspace blankLines='0'/>
   A service provider that delivers SETs to other providers known
-as Event Receivers.</t>
-  <t hangText='Event Receiver'><vspace blankLines='0'/>
-  A service provider that registers to receive SETs from an Event
+as SET Receivers.</t>
+  <t hangText='SET Receiver'><vspace blankLines='0'/>
+  A service provider that registers to receive SETs from an SET
 Transmitter and provides an endpoint to receive SETs via HTTP POST.</t>
 </list></t>
 
@@ -116,56 +116,56 @@ Transmitter and provides an endpoint to receive SETs via HTTP POST.</t>
 <section anchor="event_delivery" title="Event Delivery">
 
 <section anchor="event_delivery_process" title="Event Delivery Process">
-<t>When an Event occurs, the Event Transmitter constructs a SET
+<t>When an Event occurs, the SET Transmitter constructs a SET
 token <xref target="SET"/> that describes the Event.</t>
 
 <t>How SETs are defined and the process by which Events are identified for 
-Event Receivers is out-of-scope of this    specification.</t>
+SET Receivers is out-of-scope of this    specification.</t>
 
-<t>When a SET is available for an Event Receiver, the Event Transmitter
-attempts to deliver the SET based on the Event Receiver’s registered
+<t>When a SET is available for an SET Receiver, the SET Transmitter
+attempts to deliver the SET based on the SET Receiver’s registered
 delivery mechanism:</t>
 
 <t><list style="symbols">
-  <t>The Event Transmitter uses an HTTP/1.1 POST to the Event Receiver
+  <t>The SET Transmitter uses an HTTP/1.1 POST to the SET Receiver
 endpoint to deliver the SET;</t>
-  <t>Or, the Event Transmitter delivers the Event through a different
+  <t>Or, the SET Transmitter delivers the Event through a different
 method not defined by this specification.</t>
 </list></t>
 
 <t>In Push-Based SET Delivery Using HTTP, SETs are delivered one at a
-time using HTTP POST requests by an Event Transmitter to an Event
+time using HTTP POST requests by an SET Transmitter to an SET
 Receiver. The HTTP request body is a JSON Web Token <xref target="RFC7519"/>
 with a <spanx style="verb">Content-Type</spanx> header of <spanx style="verb">application/secevent+jwt</spanx> as
 defined in Section 2.2 and 6.2 of <xref target="SET"/>. Upon receipt, the 
-Event Receiver acknowledges receipt with a response with HTTP 
+SET Receiver acknowledges receipt with a response with HTTP 
 Status 202, as described below in <xref target="httpPost"/>.</t>
 
-<t>After successful (acknowledged) SET delivery, Event 
+<t>After successful (acknowledged) SET delivery, SET 
 Transmitters SHOULD NOT be required to maintain or record SETs for 
-recovery. Once a SET is acknowledged, the Event Receiver SHALL be 
+recovery. Once a SET is acknowledged, the SET Receiver SHALL be 
 responsible for retention and recovery.</t>
 
 <t>Transmitted SETs SHOULD be self-validating (e.g. signed)
-if there is a requirement to verify they were issued by the Event 
+if there is a requirement to verify they were issued by the SET 
 Transmitter at a later date when de-coupled from the original 
 delivery where authenticity could be checked via the HTTP or 
 TLS mutual authentication.</t>
 
-<t>Upon receiving a SET, the Event Receiver reads the SET and validates 
-it. The Event Receiver MUST acknowledge receipt to the Event Transmitter, using the 
+<t>Upon receiving a SET, the SET Receiver reads the SET and validates 
+it. The SET Receiver MUST acknowledge receipt to the SET Transmitter, using the 
 defined acknowledgement or error method.</t>
 
-<t>The Event Receiver SHALL NOT use the Event acknowledgement mechanism
+<t>The SET Receiver SHALL NOT use the Event acknowledgement mechanism
 to report Event errors other than relating to the parsing and validation
 of the SET.</t>
 
 </section>
 <section anchor="httpPost" title="Push Delivery using HTTP">
-<t>This method allows an Event Transmitter to use HTTP POST 
+<t>This method allows an SET Transmitter to use HTTP POST 
 (Section 4.3.3 <xref target="RFC7231"/>) to deliver
 SETs to a previously registered web callback URI supplied by the
-Event Receiver as part of a configuration process 
+SET Receiver as part of a configuration process 
 (not defined by this document).</t>
 
 <t>The SET to be delivered MAY be signed 
@@ -179,7 +179,7 @@ As per Section 5.3.2 <xref target="RFC7231"/>, the expected
 media type (<spanx style="verb">Accept</spanx> header) response is 
 <spanx style="verb">application/json</spanx>.</t>
 
-<t>To deliver an Event, the Event Transmitter generates an event 
+<t>To deliver an Event, the SET Transmitter generates an event 
 delivery message and uses HTTP POST to the configured endpoint with
 the appropriate <spanx style="verb">Accept</spanx> and 
 <spanx style="verb">Content-Type</spanx> headers.</t>
@@ -207,20 +207,20 @@ tZSI6Impkb2UiLCJpZCI6IjQ0ZjYxNDJkZjk2YmQ2YWI2MWU3NTIxZDkiLCJuYW
 .
 ]]></artwork></figure>
 
-<t>Upon receipt of the request, the Event Receiver SHALL 
+<t>Upon receipt of the request, the SET Receiver SHALL 
 validate the JWT structure of the SET as defined in 
-Section 7.2 <xref target="RFC7519"/>. The Event Receiver 
+Section 7.2 <xref target="RFC7519"/>. The SET Receiver 
 SHALL also validate the SET information as described
 in Section 2 <xref target="SET"/>.</t>
 
-<t>If the SET is determined to be valid, the Event Receiver SHALL
+<t>If the SET is determined to be valid, the SET Receiver SHALL
 “acknowledge” successful submission by responding with HTTP Status
 202 as <spanx style="verb">Accepted</spanx> 
 (see Section 6.3.3 <xref target="RFC7231"/>).</t>
 
 <t>In order
 to maintain compatibility with other methods of transmission, the 
-Event Receiver SHOULD NOT include an HTTP response body representation
+SET Receiver SHOULD NOT include an HTTP response body representation
 of the submitted SET or what the SET’s pending status is when 
 acknowledging success. In the case of an error (e.g. HTTP Status 400),
 the purpose of the HTTP response body is to indicate any SET parsing, 
@@ -234,21 +234,21 @@ HTTP/1.1 202 Accepted
 ]]></artwork></figure>
 
 <t>Note that the purpose of the “acknowledgement” response is to let the 
-Event Transmitter know that a SET has been delivered and the 
-information no longer needs to be retained by the Event Transmitter. 
-Before acknowledgement, Event Receivers SHOULD ensure they have 
+SET Transmitter know that a SET has been delivered and the 
+information no longer needs to be retained by the SET Transmitter. 
+Before acknowledgement, SET Receivers SHOULD ensure they have 
 validated received SETs and retained them in a manner appropriate 
 to information retention requirements appropriate to the SET 
 event types signaled. The level and method of retention of SETs
-by Event Receivers is out-of-scope of this specification.</t>
+by SET Receivers is out-of-scope of this specification.</t>
 
-<t>In the Event of a general HTTP error condition, the Event Receiver
+<t>In the Event of a general HTTP error condition, the SET Receiver
 MAY respond with an appropriate HTTP Status code as defined in 
 Section 6 <xref target="RFC7231"/>.</t>
 
-<t>When the Event Receiver detects an error parsing or 
+<t>When the SET Receiver detects an error parsing or 
 validating a received SET (as defined by <xref target="SET"/>), 
-the Event Receiver SHALL indicate an HTTP Status 400 error with an 
+the SET Receiver SHALL indicate an HTTP Status 400 error with an 
 error code as described in <xref target="errorResponse"/>.</t>
 
 <t>The following is an example non-normative error 
@@ -348,7 +348,7 @@ along with using signed SETs (see SET Payload Authentication below).</t>
   In scenarios 
 where SETs are signed and
 the delivery method is HTTP POST (see <xref target="httpPost"/>),
-Event Receivers MAY elect to use Basic Authentication or not 
+SET Receivers MAY elect to use Basic Authentication or not 
 to use HTTP or TLS based authentication at all. See 
 <xref target="payloadAuthentication"/> for considerations.</t>
 </list></t>
@@ -362,7 +362,7 @@ for the ability to pick-up or deliver SETs can be derived by
 considering the identity of the SET issuer, or via an authentication
 method above. This specification considers authentication as a
 feature to prevent denial-of-service attacks. Because SETs are
-not commands (see ), Event Receivers are free to ignore SETs that 
+not commands (see ), SET Receivers are free to ignore SETs that 
 are not of interest.</t>
 
 <t>For illustrative purposes only, SET delivery examples show an OAuth2
@@ -403,7 +403,7 @@ the relevant specifications.</t>
 <t>In scenarios where HTTP authorization or TLS mutual authentication
 are not used or are considered weak, JWS signed SETs SHOULD be 
 used (see <xref target="RFC7515"/> and 
-Security Considerations <xref target="SET"/>). This enables the Event Receiver
+Security Considerations <xref target="SET"/>). This enables the SET Receiver
 to validate that the SET issuer is authorized to deliver SETs.</t>
 
 </section>
@@ -420,8 +420,8 @@ disallowed in HTTP.</t>
 </section>
 <section anchor="tls-support-considerations" title="TLS Support Considerations">
 <t>SETs contain sensitive information that is considered PII
-(e.g. subject claims). Therefore, Event Transmitters and
-Event Receivers MUST require the use of a transport-layer 
+(e.g. subject claims). Therefore, SET Transmitters and
+SET Receivers MUST require the use of a transport-layer 
 security mechanism. Event delivery endpoints MUST support TLS 
 1.2 <xref target="RFC5246"/> and MAY support additional 
 transport-layer mechanisms meeting its security requirements. 
@@ -470,12 +470,12 @@ information is provided as a resource to implementers.</t>
 be used to provide verification of its authenticity.</t>
 
 <t>When sharing personally identifiable information or information
-that is otherwise considered confidential to affected users, Event 
+that is otherwise considered confidential to affected users, SET 
 Transmitters and Receivers MUST have the appropriate legal agreements
 and user consent or terms of service in place.</t>
 
 <t>The propagation of subject identifiers can be perceived as personally
-identifiable information. Where possible, Event Transmitters and Receivers
+identifiable information. Where possible, SET Transmitters and Receivers
 SHOULD devise approaches that prevent propagation — for example, the
 passing of a hash value that requires the subscriber to already know
 the subject.</t>
@@ -819,190 +819,205 @@ following changes:</t>
   <t>Removed informative reference to RFC6202.</t>
 </list></t>
 
+<t>Draft 01 - AB</t>
+
+<t><list style="symbols">
+  <t>Converted to Markdown</t>
+  <t>Removed NumericDate definition (unused).</t>
+  <t>Removed Event and Subject definitions (defined in SET).</t>
+  <t>Removed text related to Event Streams.</t>
+  <t>Removed Mike Jones and Phil Hunt as editors, per respective requests.</t>
+  <t>Fixed area and workgroup to match secevent.</t>
+  <t>Renamed Event Transmitter and Event Receiver to SET Transmitter and SET Receiver, respectively.</t>
+</list></t>
+
 </section>
 
 
   </back>
 
 <!-- ##markdown-source:
-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
-sIbW7/W74n8BSRAk3uJQAAA=
+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
+D3nADKvPLBErWi+AabaVLrvifwGGv0pLGFIAAA==
 
 -->
 
