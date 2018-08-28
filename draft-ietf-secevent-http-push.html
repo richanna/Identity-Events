@@ -596,6 +596,7 @@
 <p id="rfc.section.2.2.p.1">This method allows a SET Transmitter to use HTTP POST (Section 4.3.3 <a href="#RFC7231" class="xref">[RFC7231]</a>) to deliver SETs to a previously registered web callback URI supplied by the SET Receiver as part of a configuration process (not defined by this document).</p>
 <p id="rfc.section.2.2.p.2">The SET to be delivered MAY be signed and/or encrypted as defined in <a href="#SET" class="xref">[SET]</a>.</p>
 <p id="rfc.section.2.2.p.3">The HTTP Content-Type (see Section 3.1.1.5 <a href="#RFC7231" class="xref">[RFC7231]</a>) for the HTTP POST is <samp>application/secevent+jwt</samp> and the request body SHALL consist of a single SET (see <a href="#SET" class="xref">[SET]</a>).  As per Section 5.3.2 <a href="#RFC7231" class="xref">[RFC7231]</a>, the value of the <samp>Accept</samp> header is <samp>application/json</samp>.</p>
+<p id="rfc.section.2.2.p.4">The following is a non-normative example of a SET transmission HTTP POST request:</p>
 <div id="rfc.figure.1"></div>
 <div id="postSet"></div>
 <pre>
@@ -1054,6 +1055,7 @@ Content-Type: application/json
 <li>Changed MAY to may in explanation of non-normative line breaks and whitespace in examples.</li>
 <li>Removed unnecessary text about SET creation and aspects of SET handling not related to the delivery method.</li>
 <li>Removed duplicate technical description of delivery method requests and responses.</li>
+<li>Added &#8220;non-normative example&#8221; text before example SET transmission request.</li>
 </ul>
 <h1 id="rfc.authors"><a href="#rfc.authors">Authors' Addresses</a></h1>
 <div class="avoidbreak">

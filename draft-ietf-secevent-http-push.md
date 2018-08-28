@@ -139,6 +139,8 @@ As per Section 5.3.2 {{!RFC7231}}, the value of the
 `Accept` header is 
 `application/json`.
 
+The following is a non-normative example of a SET transmission HTTP POST request:
+
 ~~~
 POST /Events  HTTP/1.1
 
@@ -522,3 +524,4 @@ Draft 01 - AB
 * Changed MAY to may in explanation of non-normative line breaks and whitespace in examples.
 * Removed unnecessary text about SET creation and aspects of SET handling not related to the delivery method.
 * Removed duplicate technical description of delivery method requests and responses.
+* Added "non-normative example" text before example SET transmission request.
