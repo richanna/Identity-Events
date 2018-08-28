@@ -2,12 +2,12 @@
 title: Push-Based SET Token Delivery Using HTTP
 abbrev: draft-ietf-secevent-http-push
 docname: draft-ietf-secevent-http-push-00
-date: 2018-07-20
+date: 2018-08-27
 category: std
 ipr: trust200902
 
-area: Network
-workgroup: Network Working Group
+area: Security
+workgroup: Security Events Working Group
 keyword: Internet-Draft
 
 stand_alone: yes
@@ -26,13 +26,11 @@ author:
     organization: Microsoft
     email: mbj@microsoft.com
     uri: http://self-issued.info/
-    role: editor
 -
     ins: P. Hunt
     name: Phil Hunt
     organization: Oracle
     email: phil.hunt@yahoo.com
-    role: editor
 -
     ins: M. Scurtescu
     name: Marius Scurtescu

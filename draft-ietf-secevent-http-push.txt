@@ -2,11 +2,11 @@
 
 
 
-Network Working Group                                    A. Backman, Ed.
+Security Events Working Group                            A. Backman, Ed.
 Internet-Draft                                                    Amazon
-Intended status: Standards Track                           M. Jones, Ed.
-Expires: January 21, 2019                                      Microsoft
-                                                            P. Hunt, Ed.
+Intended status: Standards Track                                M. Jones
+Expires: February 28, 2019                                     Microsoft
+                                                                 P. Hunt
                                                                   Oracle
                                                             M. Scurtescu
                                                                   Google
@@ -14,7 +14,7 @@ Expires: January 21, 2019                                      Microsoft
                                                                    Cisco
                                                               A. Nadalin
                                                                Microsoft
-                                                           July 20, 2018
+                                                         August 27, 2018
 
 
                 Push-Based SET Token Delivery Using HTTP
@@ -41,7 +41,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 21, 2019.
+   This Internet-Draft will expire on February 28, 2019.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Backman, et al.         Expires January 21, 2019                [Page 1]
+Backman, et al.         Expires February 28, 2019               [Page 1]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    (http://trustee.ietf.org/license-info) in effect on the date of
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Backman, et al.         Expires January 21, 2019                [Page 2]
+Backman, et al.         Expires February 28, 2019               [Page 2]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    For purposes of readability examples are not URL encoded.
@@ -165,9 +165,9 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
 
 
-Backman, et al.         Expires January 21, 2019                [Page 3]
+Backman, et al.         Expires February 28, 2019               [Page 3]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    acknowledges receipt with a response with HTTP Status 202, as
@@ -221,9 +221,9 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
 
 
-Backman, et al.         Expires January 21, 2019                [Page 4]
+Backman, et al.         Expires February 28, 2019               [Page 4]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    POST /Events  HTTP/1.1
@@ -277,9 +277,9 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
 
 
-Backman, et al.         Expires January 21, 2019                [Page 5]
+Backman, et al.         Expires February 28, 2019               [Page 5]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    information no longer needs to be retained by the Event Transmitter.
@@ -333,9 +333,9 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
 
 
-Backman, et al.         Expires January 21, 2019                [Page 6]
+Backman, et al.         Expires February 28, 2019               [Page 6]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    +-----------+-------------------------------------------------------+
@@ -389,9 +389,9 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
 
 
-Backman, et al.         Expires January 21, 2019                [Page 7]
+Backman, et al.         Expires February 28, 2019               [Page 7]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
 3.  Authentication and Authorization
@@ -445,9 +445,9 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
 
 
-Backman, et al.         Expires January 21, 2019                [Page 8]
+Backman, et al.         Expires February 28, 2019               [Page 8]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    use of bearer tokens in the specification does reflect common
@@ -501,9 +501,9 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
 
 
-Backman, et al.         Expires January 21, 2019                [Page 9]
+Backman, et al.         Expires February 28, 2019               [Page 9]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    its "@" delimiter) when an "http" URI reference is generated with a
@@ -557,9 +557,9 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
 
 
-Backman, et al.         Expires January 21, 2019               [Page 10]
+Backman, et al.         Expires February 28, 2019              [Page 10]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
 5.  Privacy Considerations
@@ -613,9 +613,9 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
 
 
-Backman, et al.         Expires January 21, 2019               [Page 11]
+Backman, et al.         Expires February 28, 2019              [Page 11]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    [RFC6750]  Jones, M. and D. Hardt, "The OAuth 2.0 Authorization
@@ -669,9 +669,9 @@ Internet-Draft        draft-ietf-secevent-http-push            July 2018
 
 
 
-Backman, et al.         Expires January 21, 2019               [Page 12]
+Backman, et al.         Expires February 28, 2019              [Page 12]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    [SET]      Hunt, P., Ed., Jones, M., Denniss, W., and M. Ansari,
@@ -725,9 +725,9 @@ Appendix A.  Other Streaming Specifications
 
 
 
-Backman, et al.         Expires January 21, 2019               [Page 13]
+Backman, et al.         Expires February 28, 2019              [Page 13]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    Apache Kafka
@@ -781,9 +781,9 @@ Appendix C.  Change Log
 
 
 
-Backman, et al.         Expires January 21, 2019               [Page 14]
+Backman, et al.         Expires February 28, 2019              [Page 14]
 
-Internet-Draft        draft-ietf-secevent-http-push            July 2018
+Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
 Authors' Addresses
@@ -794,14 +794,14 @@ Authors' Addresses
    Email: richanna@amazon.com
 
 
-   Michael B. Jones (editor)
+   Michael B. Jones
    Microsoft
 
    Email: mbj@microsoft.com
    URI:   http://self-issued.info/
 
 
-   Phil Hunt (editor)
+   Phil Hunt
    Oracle
 
    Email: phil.hunt@yahoo.com
@@ -837,4 +837,4 @@ Authors' Addresses
 
 
 
-Backman, et al.         Expires January 21, 2019               [Page 15]
+Backman, et al.         Expires February 28, 2019              [Page 15]
