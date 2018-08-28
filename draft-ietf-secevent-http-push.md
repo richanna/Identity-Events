@@ -92,7 +92,7 @@ SET Transmitter
 as SET Receivers.
 
 SET Receiver
-: A service provider that registers to receive SETs from an SET
+: A service provider that registers to receive SETs from a SET
 Transmitter and provides an endpoint to receive SETs via HTTP POST. 
 
 
@@ -107,7 +107,7 @@ token {{!SET}} that describes the Event.
 How SETs are defined and the process by which Events are identified for 
 SET Receivers is out-of-scope of this    specification.
 
-When a SET is available for an SET Receiver, the SET Transmitter
+When a SET is available for a SET Receiver, the SET Transmitter
 attempts to deliver the SET based on the SET Receiver's registered
 delivery mechanism:
 
@@ -117,7 +117,7 @@ endpoint to deliver the SET;
 method not defined by this specification.
 
 In Push-Based SET Delivery Using HTTP, SETs are delivered one at a
-time using HTTP POST requests by an SET Transmitter to an SET
+time using HTTP POST requests by a SET Transmitter to a SET
 Receiver. The HTTP request body is a JSON Web Token {{!RFC7519}}
 with a `Content-Type` header of `application/secevent+jwt` as
 defined in Section 2.2 and 6.2 of {{!SET}}. Upon receipt, the 
@@ -145,7 +145,7 @@ of the SET.
 
 Transmitting a SET {#tx_request}
 ------------------
-This method allows an SET Transmitter to use HTTP POST 
+This method allows a SET Transmitter to use HTTP POST 
 (Section 4.3.3 {{!RFC7231}}) to deliver
 SETs to a previously registered web callback URI supplied by the
 SET Receiver as part of a configuration process 
@@ -538,7 +538,7 @@ Draft 01 - AB
 * Renamed Event Transmitter and Event Receiver to SET Transmitter and SET Receiver, respectively.
 * Added IANA registry for SET Delivery Error Codes.
 * Removed enumeration of HTTP authentication methods.
-* Removed generally applicable guidance for HTTP, authorization tokens, and bearer tokens.
+* Removed generally applicable guidance for HTTP, authorization tokens, andbearer tokens.
 * Elaborated on guidance for DoS protection via authn, and moved it to Security Considerations.
 * Removed redundant instruction to use `WWW-Authenticate` header.
 * Removed further generally applicable guidance for authorization tokens.
