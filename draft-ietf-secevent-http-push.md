@@ -310,30 +310,6 @@ This is not intended to imply that bearer tokens are
 preferred. However, the use of bearer tokens in the specification does
 reflect common practice. 
 
-Use of Tokens as Authorizations {#authzTokens}
--------------------------------
-When using bearer tokens or proof-of-possession tokens that
-represent an authorization grant such as issued by OAuth (see {{!RFC6749}}), implementers SHOULD consider the type of
-authorization granted, any authorized scopes (see Section 3.3 of {{!RFC6749}}), and the security subject(s) that SHOULD be mapped
-from the authorization when considering local access control rules.
-Section 6 of the OAuth Assertions draft {{!RFC7521}}, documents common scenarios for
-authorization including:
-
-* Clients using an assertion to authenticate and/or act on behalf
-of itself;
-
-* Clients acting on behalf of a user; and,
-
-* A Client acting on behalf of an anonymous user (e.g., see next
-section).
-
-When using OAuth authorization tokens, implementers MUST take
-into account the threats and countermeasures documented in the
-security considerations for the use of client authorizations (see
-Section 8 of {{!RFC7521}}). When using
-other token formats or frameworks, implementers MUST take into account
-similar threats and countermeasures, especially those documented by
-the relevant specifications.
 
 Security Considerations {#Security}
 =======================
@@ -570,3 +546,4 @@ Draft 01 - AB
 * Removed generally applicable guidance for HTTP, authorization tokens, and bearer tokens.
 * Elaborated on guidance for DoS protection via authn, and moved it to Security Considerations.
 * Removed redundant instruction to use `WWW-Authenticate` header.
+* Removed further generally applicable guidance for authorization tokens.
