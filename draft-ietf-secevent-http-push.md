@@ -1,8 +1,8 @@
 ---
 title: Push-Based SET Token Delivery Using HTTP
 abbrev: draft-ietf-secevent-http-push
-docname: draft-ietf-secevent-http-push-00
-date: 2018-08-27
+docname: draft-ietf-secevent-http-push-01
+date: 2018-08-28
 category: std
 ipr: trust200902
 
@@ -526,3 +526,4 @@ Draft 01 - AB
 * Removed duplicate technical description of delivery method requests and responses.
 * Added "non-normative example" text before example SET transmission request.
 * Updated error code column headers to match descriptive text.
+* Updated date. Updated documentation version to 01.
