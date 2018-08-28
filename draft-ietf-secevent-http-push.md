@@ -295,38 +295,7 @@ Authentication and Authorization {#aa}
 The SET delivery method described in this specification is
 based upon HTTP and depends on the use of TLS and/or standard 
 HTTP authentication and authorization schemes as per 
-{{!RFC7235}}. For example, the following
-methodologies could be used among others:
-
-{: vspace="0"}
-TLS Client Authentication
-: Event delivery
-endpoints MAY request TLS mutual client authentication. 
-See Section 7.3 {{!RFC5246}}. 
-
-Bearer Tokens
-: Bearer tokens 
-{{!RFC6750}} MAY be used when combined with TLS and a token
-framework such as OAuth 2.0 {{!RFC6749}}. 
-For security considerations regarding the use of bearer tokens in
-SET delivery see {{bearerConsiderations}}.
-
-Basic Authentication
-: Usage of basic
-authentication should be avoided due to its use of a single factor
-that is based upon a relatively static, symmetric secret.
-Implementers SHOULD combine the use of basic authentication with
-other factors. The security considerations of HTTP BASIC, are well
-documented in {{!RFC7617}} and SHOULD be considered
-along with using signed SETs (see SET Payload Authentication below).
-
-SET Payload Authentication
-: In scenarios 
-where SETs are signed and
-the delivery method is HTTP POST (see {{httpPost}}),
-SET Receivers MAY elect to use Basic Authentication or not 
-to use HTTP or TLS based authentication at all. See 
-{{payloadAuthentication}} for considerations.
+{{!RFC7235}}.
 
 As per Section 4.1 of {{!RFC7235}}, a SET
 delivery endpoint SHALL indicate supported HTTP authentication 
@@ -334,8 +303,8 @@ schemes via the `WWW-Authenticate` header.
 
 Because SET Delivery describes a simple function, authorization
 for the ability to pick-up or deliver SETs can be derived by
-considering the identity of the SET issuer, or via an authentication
-method above. This specification considers authentication as a
+considering the identity of the SET issuer, or via other employed
+authentication methods. This specification considers authentication as a
 feature to prevent denial-of-service attacks. Because SETs are
 not commands (see ), SET Receivers are free to ignore SETs that 
 are not of interest.
@@ -382,17 +351,6 @@ used (see {{!RFC7515}} and
 Security Considerations {{!SET}}). This enables the SET Receiver
 to validate that the SET issuer is authorized to deliver SETs.
 
-HTTP Considerations
--------------------
-SET delivery depends on the use of Hypertext Transfer Protocol and thus
-subject to the security considerations of HTTP Section 9 {{!RFC7230}} and its related specifications.
-
-As stated in Section 2.7.1 {{!RFC7230}}, an 
-HTTP requestor MUST NOT generate the `userinfo`
-(i.e., username and password) component (and its "@" delimiter) when
-an "http" URI reference is generated with a message as they are now
-disallowed in HTTP.
-
 TLS Support Considerations
 --------------------------
 SETs contain sensitive information that is considered PII
@@ -404,38 +362,8 @@ transport-layer mechanisms meeting its security requirements.
 When using TLS, the client MUST perform a TLS/SSL server
 certificate check, per {{!RFC6125}}. Implementation
 security considerations for TLS can be found in "Recommendations for
-Secure Use of TLS and DTLS" {{!RFC7525}}.
+Secure Use of TLS and DTLS" {{?RFC7525}}.
 
-Authorization Token Considerations
-----------------------------------
-When using authorization tokens such as those issued by OAuth 2.0
-{{!RFC6749}}, implementers MUST take into account threats
-and countermeasures documented in Section 8 of {{!RFC7521}}.
-
-### Bearer Token Considerations {#bearerConsiderations}
-Due to the possibility of interception, Bearer tokens MUST be 
-exchanged using TLS.
-
-Bearer tokens MUST have a limited lifetime that can be determined
-directly or indirectly (e.g., by checking with a validation service)
-by the service provider. By expiring tokens, clients are forced to
-obtain a new token (which usually involves re-authentication) for
-continued authorized access. For example, in OAuth2, a client MAY use
-OAuth token refresh to obtain a new bearer token after authenticating
-to an authorization server. See Section 6 of {{!RFC6749}}.
-
-Implementations supporting OAuth bearer tokens need to factor in
-security considerations of this authorization method 
-{{!RFC7521}}. Since security is only as good
-as the weakest link, implementers also need to consider authentication
-choices coupled with OAuth bearer tokens. The security considerations
-of the default authentication method for OAuth bearer tokens, HTTP
-BASIC, are well documented in 
-{{!RFC7617}}, therefore implementers
-are encouraged to prefer stronger authentication methods. Designating
-the specific methods of authentication and authorization are
-out-of-scope for the delivery of SET tokens, however this 
-information is provided as a resource to implementers.
 
 Privacy Considerations
 ======================
@@ -640,3 +568,5 @@ Draft 01 - AB
 * Fixed area and workgroup to match secevent.
 * Renamed Event Transmitter and Event Receiver to SET Transmitter and SET Receiver, respectively.
 * Added IANA registry for SET Delivery Error Codes.
+* Removed enumeration of HTTP authentication methods.
+* Removed generally applicable guidance for HTTP, authorization tokens, and bearer tokens.
