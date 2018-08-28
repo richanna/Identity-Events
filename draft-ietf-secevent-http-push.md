@@ -72,14 +72,8 @@ NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
 described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when,
 they appear in all capitals, as shown here.
 
-For purposes of readability examples are not URL encoded.
-Implementers MUST percent encode URLs as described in Section 2.1 of
-{{!RFC3986}}.
-
-Throughout this documents all figures MAY contain spaces and extra
-line-wrapping for readability and space limitations. Similarly, some
-URI's contained within examples, have been shortened for space and
-readability reasons.
+Throughout this documents all figures may contain spaces and extra
+line-wrapping for readability and space limitations.
 
 Definitions {#defn}
 -------------------
@@ -546,3 +540,5 @@ Draft 01 - AB
 * Removed bearer token from example delivery request, and removed text explaining it was an example only.
 * Broke delivery method description into separate request/response sections.
 * Added missing blank line ahead of body in example request.
+* Removed unapplicable explanatory text regarding shortening and encoding of URLs in examples.
+* Changed MAY to may in explanation of non-normative line breaks and whitespace in examples.
