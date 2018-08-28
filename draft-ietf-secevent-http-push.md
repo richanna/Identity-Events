@@ -122,7 +122,7 @@ Receiver. The HTTP request body is a JSON Web Token {{!RFC7519}}
 with a `Content-Type` header of `application/secevent+jwt` as
 defined in Section 2.2 and 6.2 of {{!SET}}. Upon receipt, the 
 SET Receiver acknowledges receipt with a response with HTTP 
-Status 202, as described below in {{httpPost}}.
+Status 202, as described below in {{tx_request}}.
 
 After successful (acknowledged) SET delivery, SET 
 Transmitters SHOULD NOT be required to maintain or record SETs for 
@@ -143,8 +143,8 @@ The SET Receiver SHALL NOT use the Event acknowledgement mechanism
 to report Event errors other than relating to the parsing and validation
 of the SET.
 
-Push Delivery using HTTP {#httpPost}
-------------------------
+Transmitting a SET {#tx_request}
+------------------
 This method allows an SET Transmitter to use HTTP POST 
 (Section 4.3.3 {{!RFC7231}}) to deliver
 SETs to a previously registered web callback URI supplied by the
@@ -188,14 +188,17 @@ tZSI6Impkb2UiLCJpZCI6IjQ0ZjYxNDJkZjk2YmQ2YWI2MWU3NTIxZDkiLCJuYW
 1lIjp7ImdpdmVuTmFtZSI6IkpvaG4iLCJmYW1pbHlOYW1lIjoiRG9lIn19fQ
 .
 ~~~
-{: #postSet title="Example HTTP POST Request"}
+{: #postSet title="Example SET Transmission Request"}
 
+Handling a SET Transmission Request {#tx_handling}
+-----------------------------------
 Upon receipt of the request, the SET Receiver SHALL 
 validate the JWT structure of the SET as defined in 
 Section 7.2 {{!RFC7519}}. The SET Receiver 
 SHALL also validate the SET information as described
 in Section 2 {{!SET}}.
 
+### Success Response {#tx_success}
 If the SET is determined to be valid, the SET Receiver SHALL
 "acknowledge" successful submission by responding with HTTP Status
 202 as `Accepted` 
@@ -226,6 +229,7 @@ to information retention requirements appropriate to the SET
 event types signaled. The level and method of retention of SETs
 by SET Receivers is out-of-scope of this specification.
 
+### Failure Response {#tx_failure}
 In the Event of a general HTTP error condition, the SET Receiver
 MAY respond with an appropriate HTTP Status code as defined in 
 Section 6 {{!RFC7231}}.
@@ -248,10 +252,9 @@ Content-Type: application/json
 
 }
 ~~~
-{: #badPostResponse title="Example HTTP Status 400 Response"}
+{: #badPostResponse title="Example Error Response"}
 
-Security Event Token Delivery Error Codes {#error_codes}
------------------------------------------
+### Security Event Token Delivery Error Codes {#error_codes}
 Security Event Token Delivery Error Codes are strings that identify a specific type of error that may occur when parsing or validating a SET. Every Security Event Token Delivery Error Code MUST have a unique name registered in the IANA "Security Event Token Delivery Error Codes" registry established by {{iana_set_errors}}.
 
 The following table presents the initial set of Error Codes that are registered in the IANA "Security Event Token Delivery Error Codes" registry:
@@ -272,8 +275,7 @@ The following table presents the initial set of Error Codes that are registered 
 | dup       | A duplicate SET was received and has been ignored. |
 {: #tabErrors title="SET Delivery Error Codes"}
 
-Error Response Handling {#errorResponse}
------------------------
+### Error Response Handling {#errorResponse}
 An error response SHALL include a JSON
 object which provides details about the error. The JSON object
 includes the JSON attributes:
@@ -541,3 +543,4 @@ Draft 01 - AB
 * Removed redundant instruction to use `WWW-Authenticate` header.
 * Removed further generally applicable guidance for authorization tokens.
 * Removed bearer token from example delivery request, and removed text explaining it was an example only.
+* Broke delivery method description into separate request/response sections.

@@ -69,13 +69,16 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 Table of Contents
 
    1.  Introduction and Overview . . . . . . . . . . . . . . . . . .   2
-     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   2
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
      1.2.  Definitions . . . . . . . . . . . . . . . . . . . . . . .   3
    2.  Event Delivery  . . . . . . . . . . . . . . . . . . . . . . .   3
      2.1.  Event Delivery Process  . . . . . . . . . . . . . . . . .   3
-     2.2.  Push Delivery using HTTP  . . . . . . . . . . . . . . . .   4
-     2.3.  Security Event Token Delivery Error Codes . . . . . . . .   6
-     2.4.  Error Response Handling . . . . . . . . . . . . . . . . .   7
+     2.2.  Transmitting a SET  . . . . . . . . . . . . . . . . . . .   4
+     2.3.  Handling a SET Transmission Request . . . . . . . . . . .   5
+       2.3.1.  Success Response  . . . . . . . . . . . . . . . . . .   5
+       2.3.2.  Failure Response  . . . . . . . . . . . . . . . . . .   6
+       2.3.3.  Security Event Token Delivery Error Codes . . . . . .   6
+       2.3.4.  Error Response Handling . . . . . . . . . . . . . . .   7
    3.  Authentication and Authorization  . . . . . . . . . . . . . .   8
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
      4.1.  Authentication Using Signed SETs  . . . . . . . . . . . .   8
@@ -100,11 +103,8 @@ Table of Contents
    a previously registered SET Receiver using HTTP [RFC7231] over TLS.
    The specification defines a method to push SETs via HTTP POST.
 
-1.1.  Notational Conventions
 
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in BCP
+
 
 
 
@@ -114,6 +114,11 @@ Backman, et al.         Expires February 28, 2019               [Page 2]
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
    14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
@@ -157,11 +162,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    o  The SET Transmitter uses an HTTP/1.1 POST to the SET Receiver
       endpoint to deliver the SET;
 
-   o  Or, the SET Transmitter delivers the Event through a different
-      method not defined by this specification.
-
-   In Push-Based SET Delivery Using HTTP, SETs are delivered one at a
-   time using HTTP POST requests by an SET Transmitter to an SET
 
 
 
@@ -170,6 +170,11 @@ Backman, et al.         Expires February 28, 2019               [Page 3]
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
+   o  Or, the SET Transmitter delivers the Event through a different
+      method not defined by this specification.
+
+   In Push-Based SET Delivery Using HTTP, SETs are delivered one at a
+   time using HTTP POST requests by an SET Transmitter to an SET
    Receiver.  The HTTP request body is a JSON Web Token [RFC7519] with a
    "Content-Type" header of "application/secevent+jwt" as defined in
    Section 2.2 and 6.2 of [SET].  Upon receipt, the SET Receiver
@@ -195,7 +200,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    report Event errors other than relating to the parsing and validation
    of the SET.
 
-2.2.  Push Delivery using HTTP
+2.2.  Transmitting a SET
 
    This method allows an SET Transmitter to use HTTP POST (Section 4.3.3
    [RFC7231]) to deliver SETs to a previously registered web callback
@@ -213,11 +218,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    To deliver an Event, the SET Transmitter generates an event delivery
    message and uses HTTP POST to the configured endpoint with the
    appropriate "Accept" and "Content-Type" headers.
-
-
-
-
-
 
 
 
@@ -246,12 +246,16 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    1lIjp7ImdpdmVuTmFtZSI6IkpvaG4iLCJmYW1pbHlOYW1lIjoiRG9lIn19fQ
    .
 
-                    Figure 1: Example HTTP POST Request
+                Figure 1: Example SET Transmission Request
+
+2.3.  Handling a SET Transmission Request
 
    Upon receipt of the request, the SET Receiver SHALL validate the JWT
    structure of the SET as defined in Section 7.2 [RFC7519].  The SET
    Receiver SHALL also validate the SET information as described in
    Section 2 [SET].
+
+2.3.1.  Success Response
 
    If the SET is determined to be valid, the SET Receiver SHALL
    "acknowledge" successful submission by responding with HTTP Status
@@ -271,10 +275,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
               Figure 2: Example Successful Delivery Response
 
-   Note that the purpose of the "acknowledgement" response is to let the
-   SET Transmitter know that a SET has been delivered and the
-   information no longer needs to be retained by the SET Transmitter.
-
 
 
 Backman, et al.         Expires February 28, 2019               [Page 5]
@@ -282,11 +282,16 @@ Backman, et al.         Expires February 28, 2019               [Page 5]
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
+   Note that the purpose of the "acknowledgement" response is to let the
+   SET Transmitter know that a SET has been delivered and the
+   information no longer needs to be retained by the SET Transmitter.
    Before acknowledgement, SET Receivers SHOULD ensure they have
    validated received SETs and retained them in a manner appropriate to
    information retention requirements appropriate to the SET event types
    signaled.  The level and method of retention of SETs by SET Receivers
    is out-of-scope of this specification.
+
+2.3.2.  Failure Response
 
    In the Event of a general HTTP error condition, the SET Receiver MAY
    respond with an appropriate HTTP Status code as defined in Section 6
@@ -295,7 +300,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    When the SET Receiver detects an error parsing or validating a
    received SET (as defined by [SET]), the SET Receiver SHALL indicate
    an HTTP Status 400 error with an error response as described in
-   Section 2.4.
+   Section 2.3.4.
 
    The following is an example non-normative error response.
 
@@ -308,9 +313,9 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    }
 
-                Figure 3: Example HTTP Status 400 Response
+                     Figure 3: Example Error Response
 
-2.3.  Security Event Token Delivery Error Codes
+2.3.3.  Security Event Token Delivery Error Codes
 
    Security Event Token Delivery Error Codes are strings that identify a
    specific type of error that may occur when parsing or validating a
@@ -321,11 +326,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    The following table presents the initial set of Error Codes that are
    registered in the IANA "Security Event Token Delivery Error Codes"
    registry:
-
-
-
-
-
 
 
 
@@ -370,13 +370,13 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
                      Table 1: SET Delivery Error Codes
 
-2.4.  Error Response Handling
+2.3.4.  Error Response Handling
 
    An error response SHALL include a JSON object which provides details
    about the error.  The JSON object includes the JSON attributes:
 
    err
-      A Security Event Token Delivery Error Code (see Section 2.3).
+      A Security Event Token Delivery Error Code (see Section 2.3.3).
       description
 
       A human-readable text that provides additional diagnostic
@@ -482,9 +482,9 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    Error Code
       The name of the Security Event Token Delivery Error Code, as
-      described in Section 2.3.  The name MUST be a case-sensitive ASCII
-      string consisting only of upper-case letters ("A" - "Z"), lower-
-      case letters ("a" - "z"), and digits ("0" - "9").
+      described in Section 2.3.3.  The name MUST be a case-sensitive
+      ASCII string consisting only of upper-case letters ("A" - "Z"),
+      lower-case letters ("a" - "z"), and digits ("0" - "9").
 
    Descrption
       A brief human-readable description of the Security Event Token
@@ -522,7 +522,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 6.1.2.2.  jwtParse
 
@@ -532,7 +532,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 6.1.2.3.  jwtHdr
 
@@ -542,7 +542,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 6.1.2.4.  jwtCrypto
 
@@ -552,7 +552,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 
 
@@ -570,7 +570,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 6.1.2.6.  jwe
 
@@ -580,7 +580,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 6.1.2.7.  jwtAud
 
@@ -590,7 +590,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 6.1.2.8.  jwtIss
 
@@ -600,7 +600,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 6.1.2.9.  setType
 
@@ -618,7 +618,7 @@ Backman, et al.         Expires February 28, 2019              [Page 11]
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 6.1.2.10.  setParse
 
@@ -629,7 +629,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 6.1.2.11.  setData
 
@@ -639,7 +639,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 6.1.2.12.  dup
 
@@ -649,7 +649,7 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Change Controller: IETF Secevent Working Group
 
-   o  Defining Document(s): Section 2.3 of this document.
+   o  Defining Document(s): Section 2.3.3 of this document.
 
 7.  References
 
@@ -880,15 +880,15 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    o  Removed bearer token from example delivery request, and removed
       text explaining it was an example only.
 
+   o  Broke delivery method description into separate request/response
+      sections.
+
 Authors' Addresses
 
    Annabelle Backman (editor)
    Amazon
 
    Email: richanna@amazon.com
-
-
-
 
 
 
