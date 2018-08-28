@@ -339,7 +339,8 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
 
    +-----------+-------------------------------------------------------+
-   | Err Value | Description                                           |
+   | Error     | Description                                           |
+   | Code      |                                                       |
    +-----------+-------------------------------------------------------+
    | json      | Invalid JSON object.                                  |
    |           |                                                       |
@@ -384,7 +385,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    When included as part of an HTTP Status 400 response, the above JSON
    is the HTTP response body (see Figure 3).
-
 
 
 
@@ -901,6 +901,8 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    o  Added "non-normative example" text before example SET transmission
       request.
 
+   o  Updated error code column headers to match descriptive text.
+
 Authors' Addresses
 
    Annabelle Backman (editor)
@@ -938,8 +940,6 @@ Authors' Addresses
    Microsoft
 
    Email: tonynad@microsoft.com
-
-
 
 
 

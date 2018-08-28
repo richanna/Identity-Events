@@ -234,20 +234,20 @@ Security Event Token Delivery Error Codes are strings that identify a specific t
 
 The following table presents the initial set of Error Codes that are registered in the IANA "Security Event Token Delivery Error Codes" registry:
 
-| Err Value | Description
-|-----------+-------------|
-| json      | Invalid JSON object. |
-| jwtParse  | Invalid or unparsable JWT or JSON structure. |
-| jwtHdr    | In invalid JWT header was detected. |
-| jwtCrypto | Unable to parse due to unsupported algorithm. |
-| jws       | Signature was not validated. |
-| jwe       | Unable to decrypt JWE encoded data. |
-| jwtAud    | Invalid audience value. |
-| jwtIss    | Issuer not recognized. |
-| setType   | An unexpected Event type was received. |
-| setParse  | Invalid structure was encountered such as an inability to parse or an incomplete set of Event claims. |
-| setData   | SET event claims incomplete or invalid. |
-| dup       | A duplicate SET was received and has been ignored. |
+| Error Code | Description
+|------------+-------------|
+| json       | Invalid JSON object. |
+| jwtParse   | Invalid or unparsable JWT or JSON structure. |
+| jwtHdr     | In invalid JWT header was detected. |
+| jwtCrypto  | Unable to parse due to unsupported algorithm. |
+| jws        | Signature was not validated. |
+| jwe        | Unable to decrypt JWE encoded data. |
+| jwtAud     | Invalid audience value. |
+| jwtIss     | Issuer not recognized. |
+| setType    | An unexpected Event type was received. |
+| setParse   | Invalid structure was encountered such as an inability to parse or an incomplete set of Event claims. |
+| setData    | SET event claims incomplete or invalid. |
+| dup        | A duplicate SET was received and has been ignored. |
 {: #tabErrors title="SET Delivery Error Codes"}
 
 ### Error Response Handling {#errorResponse}
@@ -525,3 +525,4 @@ Draft 01 - AB
 * Removed unnecessary text about SET creation and aspects of SET handling not related to the delivery method.
 * Removed duplicate technical description of delivery method requests and responses.
 * Added "non-normative example" text before example SET transmission request.
+* Updated error code column headers to match descriptive text.
