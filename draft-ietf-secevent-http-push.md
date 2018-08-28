@@ -297,10 +297,6 @@ based upon HTTP and depends on the use of TLS and/or standard
 HTTP authentication and authorization schemes as per 
 {{!RFC7235}}.
 
-As per Section 4.1 of {{!RFC7235}}, a SET
-delivery endpoint SHALL indicate supported HTTP authentication 
-schemes via the `WWW-Authenticate` header.
-
 Because SET Delivery describes a simple function, authorization
 for the ability to pick-up or deliver SETs can be derived by
 considering the identity of the SET issuer, or via other employed
@@ -573,3 +569,4 @@ Draft 01 - AB
 * Removed enumeration of HTTP authentication methods.
 * Removed generally applicable guidance for HTTP, authorization tokens, and bearer tokens.
 * Elaborated on guidance for DoS protection via authn, and moved it to Security Considerations.
+* Removed redundant instruction to use `WWW-Authenticate` header.

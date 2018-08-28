@@ -400,10 +400,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    HTTP and depends on the use of TLS and/or standard HTTP
    authentication and authorization schemes as per [RFC7235].
 
-   As per Section 4.1 of [RFC7235], a SET delivery endpoint SHALL
-   indicate supported HTTP authentication schemes via the "WWW-
-   Authenticate" header.
-
    Because SET Delivery describes a simple function, authorization for
    the ability to pick-up or deliver SETs can be derived by considering
    the identity of the SET issuer, or via other employed authentication
@@ -442,6 +438,10 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    implementers MUST take into account similar threats and
    countermeasures, especially those documented by the relevant
    specifications.
+
+
+
+
 
 
 
@@ -928,6 +928,8 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    o  Elaborated on guidance for DoS protection via authn, and moved it
       to Security Considerations.
 
+   o  Removed redundant instruction to use "WWW-Authenticate" header.
+
 Authors' Addresses
 
    Annabelle Backman (editor)
@@ -941,8 +943,6 @@ Authors' Addresses
 
    Email: mbj@microsoft.com
    URI:   http://self-issued.info/
-
-
 
 
 
