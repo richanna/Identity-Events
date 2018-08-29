@@ -4,9 +4,9 @@
 
 Security Events Working Group                            A. Backman, Ed.
 Internet-Draft                                                    Amazon
-Intended status: Standards Track                                M. Jones
+Intended status: Standards Track                           M. Jones, Ed.
 Expires: March 1, 2019                                         Microsoft
-                                                                 P. Hunt
+                                                            P. Hunt, Ed.
                                                                   Oracle
                                                             M. Scurtescu
                                                                   Google
@@ -846,9 +846,6 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
    o  Removed text related to Event Streams.
 
-   o  Removed Mike Jones and Phil Hunt as editors, per respective
-      requests.
-
    o  Fixed area and workgroup to match secevent.
 
    o  Renamed Event Transmitter and Event Receiver to SET Transmitter
@@ -889,7 +886,10 @@ Internet-Draft        draft-ietf-secevent-http-push          August 2018
    o  Removed duplicate technical description of delivery method
       requests and responses.
 
+   o  Added "non-normative example" text before example SET transmission
+      request.
 
+   o  Updated error code column headers to match descriptive text.
 
 
 
@@ -897,11 +897,6 @@ Backman, et al.           Expires March 1, 2019                [Page 16]
 
 Internet-Draft        draft-ietf-secevent-http-push          August 2018
 
-
-   o  Added "non-normative example" text before example SET transmission
-      request.
-
-   o  Updated error code column headers to match descriptive text.
 
    o  Updated date.  Updated documentation version to 01.
 
@@ -913,14 +908,14 @@ Authors' Addresses
    Email: richanna@amazon.com
 
 
-   Michael B. Jones
+   Michael B. Jones (editor)
    Microsoft
 
    Email: mbj@microsoft.com
    URI:   http://self-issued.info/
 
 
-   Phil Hunt
+   Phil Hunt (editor)
    Oracle
 
    Email: phil.hunt@yahoo.com
@@ -942,6 +937,11 @@ Authors' Addresses
    Microsoft
 
    Email: tonynad@microsoft.com
+
+
+
+
+
 
 
 

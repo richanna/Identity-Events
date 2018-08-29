@@ -26,11 +26,13 @@ author:
     organization: Microsoft
     email: mbj@microsoft.com
     uri: http://self-issued.info/
+    role: editor
 -
     ins: P. Hunt
     name: Phil Hunt
     organization: Oracle
     email: phil.hunt@yahoo.com
+    role: editor
 -
     ins: M. Scurtescu
     name: Marius Scurtescu
@@ -508,7 +510,6 @@ Draft 01 - AB
 * Removed NumericDate definition (unused).
 * Removed Event and Subject definitions (defined in SET).
 * Removed text related to Event Streams.
-* Removed Mike Jones and Phil Hunt as editors, per respective requests.
 * Fixed area and workgroup to match secevent.
 * Renamed Event Transmitter and Event Receiver to SET Transmitter and SET Receiver, respectively.
 * Added IANA registry for SET Delivery Error Codes.
